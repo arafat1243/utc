@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+.brand-text {
+  font-family: "Russo One", sans-serif !important;
+  color: #3953a4 !important;
+  font-size: 1.5em !important;
+}
+
+.ftco-headline {
+  color: #424242 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  display: flex;
+  font-family: "Open Sans", sans-serif !important;
+}
+
+.ftco-headline div {
+  color: #5d9cec !important;
+  margin: 0 15px !important;
+}
+
+.double-line-bottom-theme-colored-2 {
+  margin-bottom: 20px;
+  margin-top: 8px;
+  margin-left: 15px;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.double-line-bottom-theme-colored-2::before {
+  border-radius: 8px;
+  bottom: -1px;
+  content: "";
+  height: 6px;
+  left: 10px;
+  position: absolute;
+  width: 24px;
+  background-color: #5d9cec;
+}
+
+.double-line-bottom-theme-colored-2::after {
+  border-radius: 8px;
+  bottom: 1px;
+  content: "";
+  height: 2px;
+  left: 0;
+  position: absolute;
+  width: 64px;
+  background-color: #5d9cec;
+}
+
+.ftco-list {
+  list-style: none;
+  font-weight: 600;
+}
+
+.ftco-list li {
+  margin: 5px 0;
+  padding-left: 15px;
+}
+
+.ftco-list li::before {
+  color: #5d9cec;
+  content: "\F013E";
+  display: inline-block;
+  font: normal normal normal 24px/1 "Material Design Icons";
+  font-size: 16px;
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+}
+
+.theme-color {
+  color: #5d9cec !important;
+}
+
+.font-18 {
+  font-size: 18px;
+}
+
+.font-14 {
+  font-size: 14px;
+}
+
+.w-100 {
+  width: 100% !important;
+  transform: translateY(-100px) !important;
+}
+
+.transform-0 {
+  transform: none !important;
+}
+
+.white-yellow {
+  background-color: #F9F9F6 !important;
+}
+
+.details-small {
+  display: flex;
+  flex-flow: wrap row;
+  justify-content: space-around;
+}
+
+.details-small h4,
+.details-small samp {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.details-small h4 {
+  font-size: 1.1em;
+}
+
+.details-small samp {
+  font-size: 0.78em;
+}
+
+.details-small div:not(:nth-child(1)) {
+  padding-left: 20px;
+  border-left: 2px solid #858585;
+}
+
+.white-dark {
+  background-color: #373945 !important;
+}
+
+.white-dark-2 {
+  background-color: #3E404C !important;
+}
+
+.ftco-for-headline {
+  margin-left: -25px !important;
+}
+
+.ftco-for-headline::before {
+  left: 20px !important;
+}
+
