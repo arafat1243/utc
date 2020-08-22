@@ -1,73 +1,14 @@
-<template>
-    <v-app>
-        <v-main>
-            <v-app-bar app color="white" elevation="1">
-                <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-                <v-toolbar-title>
-                    <div class="d-flex justify-start wrap" v-if="$vuetify.breakpoint.lgAndUp && brandImg">
-                        <v-img :src="brandImg" height="100" width="100"></v-img>
-                        <div class="mt-6">
-                            <div class="brand-text ml--3" style="font-size: 1.3em !important">Universal Technology Corporation</div>
-                            <div class="subtitle-1 primary--text ml--3 mt--2">Futuristic Technology...</div>
-                        </div>
-                    </div>
-                    <inertia-link href="/" class="brand-text v-btn v-btn--flat v-btn--router v-btn--text theme--light v-size--default" v-else :style="$vuetify.breakpoint.smAndDown ? 'margin-left: -20px !important;' : ''">{{brandText}}</inertia-link>
-                </v-toolbar-title>
-            </v-app-bar>
-            <v-navigation-drawer v-model="drawer" permanent app :expand-on-hover="drawer">
-                
-                    <v-menu v-model="menu" bottom right transition="scale-transition" origin="top left">
-                        <template v-slot:activator="{ on }">
-                            <v-list-item class="px-2" v-on="on">
-                                <v-list-item-avatar>
-                                    <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
-                                </v-list-item-avatar>
-                                <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
-                            </v-list-item>
-                        </template>
-                        <v-card width="300">
-                        <v-list dark>
-                            <v-list-item>
-                            <v-list-item-avatar>
-                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
-                            </v-list-item-avatar>
-                            <v-list-item-content>
-                                <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
-                                <v-list-item-subtitle>{{$page.auth.email}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-btn
-                                icon
-                                @click="menu = false"
-                                >
-                                <v-icon>mdi-close-circle</v-icon>
-                                </v-btn>
-                            </v-list-item-action>
-                            </v-list-item>
-                        </v-list>
-                        <v-list>
-                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" :href="$route('users.profile')" role="menuitem">
-                                <div class="v-list-item__icon">
-                                    <v-icon>mdi-face-profile</v-icon>
-                                </div>
-                                <div class="v-list-item__content">
-                                    <div class="v-list-item__title nav-deawer-item-title">Profile</div>
-                                </div>
-                            </inertia-link>
-                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" terget="_self" href="/logout" method="post" role="menuitem">
-                                <div class="v-list-item__icon">
-                                    <v-icon>mdi-exit-to-app</v-icon>
-                                </div>
-                                <div class="v-list-item__content">
-                                    <div class="v-list-item__title nav-deawer-item-title">Logout</div>
-                                </div>
-                            </inertia-link>
-                        </v-list>
-                        </v-card>
-                    </v-menu>
-                <v-divider></v-divider>
 
-                <v-list dense>
+<template>
+  <v-app id="inspire">
+    <v-navigation-drawer
+      v-model="drawer"
+      :clipped="$vuetify.breakpoint.lgAndUp"
+      app
+      :mini-variant.sync="mini"
+      permanent
+    >
+      <v-list dense>
                     <div v-for="(item,i) in items"
                         :key="i" class="nav-deawer-item">
                         <inertia-link v-if="!item.items && item.can"  :href="item.path" :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light primary--text' : 'v-list-item v-list-item--link theme--light'"
@@ -112,29 +53,139 @@
                         </v-list-group>
                     </div>
                 </v-list>
-                </v-navigation-drawer>
-                    <slot/>
-                <v-footer  class="font-weight-medium" >
-                    <v-col class="text-center" cols="12">
-                        Copyright ©{{new Date().getFullYear()}} <Strong>UTC</Strong>. All Rights Reserved.| Developed by <a href="https://www.facebook.com/Arafat1243" target="_blank">Yeasir Arafat</a>
-                    </v-col>
-                </v-footer>
-        </v-main>
-    </v-app>
+    </v-navigation-drawer>
+
+    <v-app-bar
+      :clipped-left="$vuetify.breakpoint.lgAndUp"
+      app
+    >
+      <v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
+      <v-toolbar-title
+        
+        class="ml-0 pl-4"
+      >
+        <span class="hidden-sm-and-down">Universal Technology Corporation</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu v-model="menu" bottom left transition="scale-transition" origin="top right">
+            <template v-slot:activator="{ on }">
+               <v-btn icon v-on="on" class="mr-4">
+                                <v-badge :content="1" :value="1" color="green">
+                                    <v-icon>mdi-bell</v-icon>
+                                </v-badge>
+                            </v-btn>
+                        </template>
+                        <v-card width="300">
+                        <v-list>
+                            <v-list-item>
+                            <v-list-item-avatar size="80px">
+                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
+                                <v-list-item-subtitle>{{$page.auth.email}}</v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                                <v-btn
+                                icon
+                                @click="menu = false"
+                                >
+                                <v-icon>mdi-close-circle</v-icon>
+                                </v-btn>
+                            </v-list-item-action>
+                            </v-list-item>
+                        </v-list>
+                        <v-list>
+                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" :href="$route('users.profile')" role="menuitem">
+                                <div class="v-list-item__icon">
+                                    <v-icon>mdi-face-profile</v-icon>
+                                </div>
+                                <div class="v-list-item__content">
+                                    <div class="v-list-item__title nav-deawer-item-title">Profile</div>
+                                </div>
+                            </inertia-link>
+                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" terget="_self" href="/logout" method="post" role="menuitem">
+                                <div class="v-list-item__icon">
+                                    <v-icon>mdi-exit-to-app</v-icon>
+                                </div>
+                                <div class="v-list-item__content">
+                                    <div class="v-list-item__title nav-deawer-item-title">Logout</div>
+                                </div>
+                            </inertia-link>
+                        </v-list>
+                        </v-card>
+                    </v-menu>
+      <v-menu v-model="menu" bottom right transition="scale-transition" origin="top right">
+            <template v-slot:activator="{ on }">
+               <v-btn icon large v-on="on">
+                                <v-avatar size="80px" item>
+                                    <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                                </v-avatar>
+                            </v-btn>
+                        </template>
+                        <v-card width="300">
+                        <v-list>
+                            <v-list-item>
+                            <v-list-item-avatar size="80px">
+                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
+                                <v-list-item-subtitle>{{$page.auth.email}}</v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                                <v-btn
+                                icon
+                                @click="menu = false"
+                                >
+                                <v-icon>mdi-close-circle</v-icon>
+                                </v-btn>
+                            </v-list-item-action>
+                            </v-list-item>
+                        </v-list>
+                        <v-list>
+                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" :href="$route('users.profile')" role="menuitem">
+                                <div class="v-list-item__icon">
+                                    <v-icon>mdi-face-profile</v-icon>
+                                </div>
+                                <div class="v-list-item__content">
+                                    <div class="v-list-item__title nav-deawer-item-title">Profile</div>
+                                </div>
+                            </inertia-link>
+                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" terget="_self" href="/logout" method="post" role="menuitem">
+                                <div class="v-list-item__icon">
+                                    <v-icon>mdi-exit-to-app</v-icon>
+                                </div>
+                                <div class="v-list-item__content">
+                                    <div class="v-list-item__title nav-deawer-item-title">Logout</div>
+                                </div>
+                            </inertia-link>
+                        </v-list>
+                        </v-card>
+                    </v-menu>
+    </v-app-bar>
+    <v-main>
+          <slot/>
+    </v-main>
+    <v-footer  class="font-weight-medium" >
+             <v-col class="text-center" cols="12">
+                Copyright ©{{new Date().getFullYear()}} <Strong>UTC</Strong>. All Rights Reserved.| Developed by <a href="https://www.facebook.com/Arafat1243" target="_blank">Yeasir Arafat</a>
+            </v-col>
+        </v-footer>
+  </v-app>
 </template>
+
 <script>
 import Auth from '@/auth'
-export default {
-    data () {
-      return {
+  export default {
+    data: () => ({
+        dialog: false,
+        mini: true,
+        drawer: null,
         role: '',
-        drawer: true,
-        menu: false,
         items: [],
-        brandImg: this.$page.baseUrl+'storage/images/logo/logo.png',
-        brandText: 'UTC',
-      }
-    },
+        notifaction: false
+    }),
     props: {
       title: String,
     },
@@ -215,13 +266,6 @@ export default {
             return url === name; 
         },
    }
-}
+  }
 </script>
-<style lang="scss" scoped>
-    .ml--3{
-          margin-left: -20px !important;
-       }
-       .mt--2{
-          margin-top: -15px !important;
-       }
-</style>
+
