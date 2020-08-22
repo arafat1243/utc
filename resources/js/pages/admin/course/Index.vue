@@ -40,20 +40,20 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <div class="d-flex">
-                    <div v-for="(ui,i) in uiManage" :key="i">
-                    <v-tooltip bottom v-if="ui.can">
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-icon v-if="!ui.herf" small class="mr-2" :color="ui.color"
-                            v-bind="attrs" v-on="on" @click="ui.text === 'Preview' ? preview(item) : openDeleteDialog(item)">
-                            {{ui.icon}}
-                        </v-icon>
-                        <inertia-link v-if="ui.herf" style="font-size:16px" :href="$route('courses.edit',item.id)" v-bind="attrs" v-on="on" class="v-icon notranslate mr-2 v-icon--link mdi mdi-pencil theme--light success--text"></inertia-link>
-                        </template>
-                        <span>{{ui.text}}</span>
-                    </v-tooltip>
-                    <v-chip color="warning" v-if="!ui.can && i==0">no Actions</v-chip>
-                </div>
-            </div> 
+                        <div v-for="(ui,i) in uiManage" :key="i">
+                        <v-tooltip bottom v-if="ui.can">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-icon v-if="!ui.herf" small class="mr-2" :color="ui.color"
+                                v-bind="attrs" v-on="on" @click="ui.text === 'Preview' ? preview(item) : openDeleteDialog(item)">
+                                {{ui.icon}}
+                            </v-icon>
+                            <inertia-link v-if="ui.herf" style="font-size:16px" :href="$route('courses.edit',item.id)" v-bind="attrs" v-on="on" class="v-icon notranslate mr-2 v-icon--link mdi mdi-pencil theme--light success--text"></inertia-link>
+                            </template>
+                            <span>{{ui.text}}</span>
+                        </v-tooltip>
+                        <v-chip color="warning" v-if="!ui.can && i==0">no Actions</v-chip>
+                    </div>
+                </div> 
             </template>
         </v-data-table>
         <Pagination class="mt-4" :links="this.courses"/>

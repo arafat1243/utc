@@ -8,6 +8,7 @@ use App\Role;
 use App\Student;
 use App\StudentHasCourse;
 use App\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +27,12 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        $response = Gate::inspect('canDoIt','student_view:student_create:student_update:student_delete');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        $students = Student::orderBy('id','desc')->paginate(10);
+        return Inertia::render('admin/student/Index',compact('students'));
     }
 
     /**

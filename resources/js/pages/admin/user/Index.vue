@@ -137,9 +137,9 @@
         </v-snackbar>
         <v-dialog v-model="deleteDialog" persistent max-width="290">
           <v-card color="warning white--text">
-              <v-card-title class="headline">Delete Photo?</v-card-title>
+              <v-card-title class="headline">Delete User?</v-card-title>
               <v-card-text class="white--text">
-                Are you sure you want to delete this Photo?
+                Are you sure you want to delete this User?
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>

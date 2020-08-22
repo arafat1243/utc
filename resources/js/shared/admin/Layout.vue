@@ -67,7 +67,7 @@
         <span class="hidden-sm-and-down">Universal Technology Corporation</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-menu v-model="menu" bottom left transition="scale-transition" origin="top right">
+      <v-menu v-model="notifaction" bottom left transition="scale-transition" origin="top right">
             <template v-slot:activator="{ on }">
                <v-btn icon v-on="on" class="mr-4">
                                 <v-badge :content="1" :value="1" color="green">
@@ -88,7 +88,7 @@
                             <v-list-item-action>
                                 <v-btn
                                 icon
-                                @click="menu = false"
+                                @click="notifaction = false"
                                 >
                                 <v-icon>mdi-close-circle</v-icon>
                                 </v-btn>
@@ -182,6 +182,7 @@ import Auth from '@/auth'
         dialog: false,
         mini: true,
         drawer: null,
+        menu: false,
         role: '',
         items: [],
         notifaction: false
