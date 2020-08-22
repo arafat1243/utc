@@ -32,7 +32,8 @@ use Inertia\Inertia;
 
     Route::post('/review','ReviewController@store')->name('public.review.store');
 
-    Route::get('/apply','StudentController@create')->name('public.apply.create');
+    Route::get('/apply/{courseId?}','StudentController@create')->name('public.apply.create');
+    Route::post('/apply}','StudentController@store')->name('public.apply.store');
 
     Auth::routes(['register' => false]);
     Auth::routes(['verify' => true]);
