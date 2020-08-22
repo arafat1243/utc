@@ -9,6 +9,11 @@
               <v-text-field v-model="search" ppend-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
             </v-toolbar>
           </template>
+          <template v-slot:item.user.avatar="{item}">
+            <v-avatar size="80px">
+              <img :src="$page.baseUrl + item.user.avatar">
+            </v-avatar>
+          </template>
           <template v-slot:item.actions="{ item }">
             <div class="d-flex">
               <div v-for="(ui,i) in uiManage" :key="i">
@@ -35,9 +40,9 @@ import Auth from '@/auth'
 export default {
     data: ()=>({
       headers: [
-        {text: 'Name',value: 'name',align: 'left'},
-        {text: 'Avatar',value: 'avatar',sortable: false},
-        {text: 'E-mail',value: 'email'},
+        {text: 'Name',value: 'user.name',align: 'left'},
+        {text: 'Avatar',value: 'user.avatar',sortable: false},
+        {text: 'E-mail',value: 'user.email'},
         {text: 'Phone Number',value: 'number'},
         {text: 'Emergency Number',value: 'emergency_number'},
         {text: 'Actions',value: 'actions', sortable: false},
@@ -52,10 +57,11 @@ export default {
     },
     methods:{
       init(){
+        this.studentsOnly = this.students.data;
         let role  = new Auth(this.$page.auth.roles);
         this.uiManage = [
             {text: 'Preview',icon: 'mdi-eye',color: 'primary',can: role.can('student_view')},
-            {text: 'Edit',icon: 'mdi-eye', color: 'success',can: role.can('student_update')},
+            {text: 'Edit',icon: 'mdi-pencil', color: 'success',can: role.can('student_update')},
             {text: 'Delete',icon: 'mdi-delete',color: 'error',can: role.can('student_delete')}
         ]
       },

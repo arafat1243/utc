@@ -31,7 +31,7 @@ class StudentController extends Controller
         if ($response->denied()) {
             return abort(403,$response->message());
         }
-        $students = Student::orderBy('id','desc')->paginate(10);
+        $students = Student::orderBy('id','desc')->with('user')->paginate(10);
         return Inertia::render('admin/student/Index',compact('students'));
     }
 
