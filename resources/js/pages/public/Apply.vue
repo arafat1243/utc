@@ -194,7 +194,7 @@
                 </v-col>
             </v-row>
             <v-snackbar top v-model="snackbar" :color="$page.successMessage.success ? 'success' : 'error'">
-            {{$page.successMessage.message || error}}
+            {{$page.successMessage.message || errorMessage}}
             <template v-slot:action="{ attrs }">
                 <v-btn text v-bind="attrs" @click="snackbar = false">
                 Close
@@ -241,7 +241,8 @@ export default {
       error: {},
       courses: [],
       courseId: '',
-      success: ''
+      success: '',
+      errorMessage: ''
     }),
     props:['categorys','course',''],
     watch: {
@@ -345,15 +346,19 @@ export default {
     },
     methods: {
         onlyNumber(value){
-            this.form.number = value.replace(/[0-9]{12}$/,'')
+            if(value){
+                this.form.number = value.replace(/[0-9]{12}$/,'')
                                 .replace(/^(\d{5})(\d{6})/g,'$1-$2')
                                 .substr(0,12);
+            }
         },
         emNumber(value){
-            this.form.emergency_number = value.replace(/[0-9]{12}$/,'')
+            if(value){
+                this.form.emergency_number = value.replace(/[0-9]{12}$/,'')
                                 .replace(/^(\d{5})(\d{6})/g,'$1-$2')
                                 .substr(0,12);
             this.form.emergency_number == this.form.number ? this.error.sameNum = 'Both Number are same. please Enter deferent Number.' : this.error.sameNum = ''
+            }
         },
         onlyChar($event){
             let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
@@ -413,6 +418,7 @@ export default {
                                 this.confirm_password = '',
                                 this.passwordConfirm = [],
                                 this.error = {},
+                                this.errorMessage = '',
                                 this.courses = [],
                                 this.courseId = '';
                                 this.$refs.personalInfo.reset(),
@@ -420,8 +426,17 @@ export default {
                                 this.$refs.courseInfo.reset();
                                 this.step = 4
                             }
-                            else if(this.$page.errors.email){
-                                this.error = this.$page.errors.email[0];
+                            else if(this.$page.errors){
+                                if(this.$page.errors.email){
+                                    this.errorMessage = this.$page.errors.email[0];
+                                }
+                                else if(this.$page.errors.number){
+                                    this.errorMessage = this.$page.errors.number[0];
+                                }
+                                else{
+                                    this.errorMessage = this.$page.errors.emergency_number[0];
+                                }
+                                
                                 this.snackbar = true
                             }
                             else{

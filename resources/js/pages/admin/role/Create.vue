@@ -66,6 +66,13 @@ export default {
         text: '',
         title: '',
         permissions: [
+            {
+            page: 'Student',
+            view: {value: 'course_view', select: false},
+            create: {select: false},
+            update: {value: 'course_update', select: false},
+            delete: {select: false},
+          },
           {
             page: 'Course',
             view: {value: 'course_view', select: false},

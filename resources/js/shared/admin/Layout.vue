@@ -67,54 +67,7 @@
         <span class="hidden-sm-and-down">Universal Technology Corporation</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-menu v-model="notifaction" bottom left transition="scale-transition" origin="top right">
-            <template v-slot:activator="{ on }">
-               <v-btn icon v-on="on" class="mr-4">
-                                <v-badge :content="1" :value="1" color="green">
-                                    <v-icon>mdi-bell</v-icon>
-                                </v-badge>
-                            </v-btn>
-                        </template>
-                        <v-card width="300">
-                        <v-list>
-                            <v-list-item>
-                            <v-list-item-avatar size="80px">
-                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
-                            </v-list-item-avatar>
-                            <v-list-item-content>
-                                <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
-                                <v-list-item-subtitle>{{$page.auth.email}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-btn
-                                icon
-                                @click="notifaction = false"
-                                >
-                                <v-icon>mdi-close-circle</v-icon>
-                                </v-btn>
-                            </v-list-item-action>
-                            </v-list-item>
-                        </v-list>
-                        <v-list>
-                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" :href="$route('users.profile')" role="menuitem">
-                                <div class="v-list-item__icon">
-                                    <v-icon>mdi-face-profile</v-icon>
-                                </div>
-                                <div class="v-list-item__content">
-                                    <div class="v-list-item__title nav-deawer-item-title">Profile</div>
-                                </div>
-                            </inertia-link>
-                            <inertia-link class="v-list-item v-list-item--link theme--light primary--text" terget="_self" href="/logout" method="post" role="menuitem">
-                                <div class="v-list-item__icon">
-                                    <v-icon>mdi-exit-to-app</v-icon>
-                                </div>
-                                <div class="v-list-item__content">
-                                    <div class="v-list-item__title nav-deawer-item-title">Logout</div>
-                                </div>
-                            </inertia-link>
-                        </v-list>
-                        </v-card>
-                    </v-menu>
+      
       <v-menu v-model="menu" bottom right transition="scale-transition" origin="top right">
             <template v-slot:activator="{ on }">
                <v-btn icon large v-on="on">
@@ -185,7 +138,6 @@ import Auth from '@/auth'
         menu: false,
         role: '',
         items: [],
-        notifaction: false
     }),
     props: {
       title: String,
@@ -207,6 +159,9 @@ import Auth from '@/auth'
             this.items = [
                 { title: 'Dashboard', icon: 'mdi-view-dashboard ', path: this.$route('admin'),can: true },
                 { title: 'Users', icon: 'mdi-account-group', path: this.$route('users.index'), can: this.role.isAdmin() },
+                { title: 'Student', icon: 'mdi-card-account-details ', path: this.$route('students.index'), can: this.role.can([
+                    'student_view','student_update'
+                ]) },
                 { title: 'Roles', icon: 'mdi-account-cog',can: this.role.isAdmin(),
                     items:[
                         { title: 'Add Role', path: this.$route('roles.create'),can: this.role.isAdmin()},

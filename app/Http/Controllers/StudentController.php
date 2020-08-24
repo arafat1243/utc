@@ -31,7 +31,7 @@ class StudentController extends Controller
         if ($response->denied()) {
             return abort(403,$response->message());
         }
-        $students = Student::orderBy('id','desc')->with('user')->paginate(10);
+        $students = Student::orderBy('id','desc')->with(['user','courses.course','courses.payment'])->paginate(10);
         return Inertia::render('admin/student/Index',compact('students'));
     }
 
@@ -76,16 +76,18 @@ class StudentController extends Controller
     {
         try{
             // dd($request);
-            $validator = Validator::make($request->only(['email']),[
+            $validator = Validator::make($request->only(['email','number','emergency_number']),[
                 'email' => 'required|email:rfc,dns|unique:users',
+                'number' => 'required|unique:students',
+                'emergency_number' => 'required|unique:students',
             ]);
             if ($validator->fails()) {
                 return redirect()->route('public.apply.create')
                             ->withErrors($validator);
             }
-            
+            $path = '';
             if ($request->file('avatar')->isValid()) {
-                $fileName = 'student'.(Student::count()+1).'.'.$request->avatar->extension();
+                $fileName = 'student-'.(Student::count()+1).'.'.$request->avatar->extension();
                 $path = $request->avatar->storeAs('images/student', $fileName,'public');
                 if($path){
                     $user = new User([
@@ -124,7 +126,7 @@ class StudentController extends Controller
                                 'fees' => $request->fees
                             ]);
                             $user->roles()->sync($studentRole);
-                            return  redirect()->route('public.apply.create')->with('successMessage',['success' => true,'message' => '']);
+                            return  redirect()->route('public.apply.create')->with('successMessage',['success' => true,'message' => 'fg']);
                         }
                         
                     }else{
@@ -133,9 +135,11 @@ class StudentController extends Controller
                 }
             }
         }catch(Throwable $err){
-            Storage::delete('public/'.$path);
-            $user->delete();
-            $student->delete();
+            if($path){
+                Storage::delete('public/'.$path);
+                $user->delete();
+                $student->delete();
+            }
             return redirect()->route('public.apply.create')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }
     }
@@ -183,5 +187,32 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         //
+    }
+
+    // Student Has Course
+
+    public function course(Request $request){
+        try{
+            if ($request->file('attachment')->isValid()) {
+                $fileName = 'student-'.$request->student_id.'-'.$request->course_id.'.'.$request->attachment->extension();
+                $path = $request->attachment->storeAs('images/attachment', $fileName,'public');
+                if($path){
+                    $course = StudentHasCourse::where('student_id',$request->student_id)
+                            ->where('course_id',$request->course_id)
+                            ->update(['status'=> 'complete','attachment'=> 'storage/'.$path]);
+                    if($course){
+                        return redirect()->route('students.index')->with('successMessage',['success' => true,'message' => 'Attachment added successfull']);
+                    }
+                    else{
+                        return redirect()->route('students.index')->with('successMessage',['success' => false,'message' => 'Attachment added Failed']);
+                    }
+                }
+            }
+        }catch(Throwable $err){
+            if($path){
+                Storage::delete('public/'.$path);
+            }
+            return redirect()->route('students.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
+        }
     }
 }

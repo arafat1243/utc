@@ -79,5 +79,6 @@ use Inertia\Inertia;
 
             Route::resource('/students','StudentController',['except' => ['create', 'store','update']])->middleware('can:canDoIt,"student_view:student_delete"');
             Route::post('/students/{student}','StudentController@update')->name('students.update')->middleware('can:canDoIt,"student_update"');
+            Route::post('/student/','StudentController@course')->name('students.course')->middleware('can:canDoIt,"student_update"');
         });
     });

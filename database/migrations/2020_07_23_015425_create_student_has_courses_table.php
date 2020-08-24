@@ -14,10 +14,12 @@ class CreateStudentHasCoursesTable extends Migration
     public function up()
     {
         Schema::create('student_has_courses', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('student_id');
             $table->bigInteger('course_id');
             $table->integer('fees');
             $table->string('status')->default('panding');
+            $table->string('attachment')->default(null);
         });
     }
 

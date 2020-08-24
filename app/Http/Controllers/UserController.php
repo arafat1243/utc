@@ -85,6 +85,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'avatar' => 'storage/images/users/default.png',
             'password' => Hash::make($password),
         ];
         try{
