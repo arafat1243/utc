@@ -77,7 +77,7 @@ use Inertia\Inertia;
             Route::resource('/review','ReviewController',['except' => ['show','create', 'store', 'edit','update']])->middleware('can:canDoIt,"gallery_create:gallery_view:gallery_delete"');
             Route::post('/review/{review}','ReviewController@update')->name('review.update')->middleware('can:canDoIt,"gallery_update"');
 
-            Route::resource('/students','StudentController',['except' => ['create', 'store','update']])->middleware('can:canDoIt,"student_view:student_delete"');
+            Route::resource('/students','StudentController',['except' => ['create', 'store','update']])->middleware('can:canDoIt,"student_view:student_delete:student_update"');
             Route::post('/students/{student}','StudentController@update')->name('students.update')->middleware('can:canDoIt,"student_update"');
             Route::post('/student/','StudentController@course')->name('students.course')->middleware('can:canDoIt,"student_update"');
         });

@@ -68,10 +68,10 @@ export default {
         permissions: [
             {
             page: 'Student',
-            view: {value: 'course_view', select: false},
+            view: {value: 'student_view', select: false},
             create: {select: false},
-            update: {value: 'course_update', select: false},
-            delete: {select: false},
+            update: {value: 'student_update', select: false},
+            delete: {value: 'student_update',select: false},
           },
           {
             page: 'Course',

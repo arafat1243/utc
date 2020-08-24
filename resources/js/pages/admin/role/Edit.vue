@@ -62,6 +62,13 @@ export default {
         text: '',
         title: '',
         permissions: [
+            {
+            page: 'Student',
+            view: {value: 'student_view', select: false},
+            create: {select: false},
+            update: {value: 'student_update', select: false},
+            delete: {value: 'student_update',select: false},
+          },
           {
             page: 'Course',
             view: {value: 'course_view', select: false},
@@ -107,8 +114,9 @@ export default {
           {
             page: 'Review',
             view: {value: 'review_view', select: false},
+            create: {select: false},
             update: {value: 'review_update', select: false},
-            delete: {value: 'review_update_delete', select: false},
+            delete: {value: 'review_delete', select: false},
           }
           
         ],

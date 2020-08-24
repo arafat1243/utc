@@ -7,6 +7,7 @@
       app
       :mini-variant.sync="mini"
       permanent
+      v-if="navShow"
     >
       <v-list dense>
                     <div v-for="(item,i) in items"
@@ -59,12 +60,9 @@
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
     >
-      <v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
-      <v-toolbar-title
-        
-        class="ml-0 pl-4"
-      >
-        <span class="hidden-sm-and-down">Universal Technology Corporation</span>
+      <v-app-bar-nav-icon v-if="navShow" @click.stop="mini = !mini"></v-app-bar-nav-icon>
+      <v-toolbar-title class="ml-0 pl-4">
+        <span >Universal Technology Corporation</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       
@@ -138,9 +136,11 @@ import Auth from '@/auth'
         menu: false,
         role: '',
         items: [],
+        navShow: true
     }),
     props: {
       title: String,
+      nav: true
     },
     watch: {
       title: {
@@ -152,6 +152,9 @@ import Auth from '@/auth'
     },
     created(){
         this.role = new Auth(this.$page.auth.roles)
+        if(this.nav){
+            this.navShow = !this.nav
+        }
         this.init()    
     },
     methods:{

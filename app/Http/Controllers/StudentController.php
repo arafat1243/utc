@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Course;
 use App\CourseCategory;
+use App\Payment;
 use App\Role;
 use App\Student;
 use App\StudentHasCourse;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -163,7 +165,15 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        //
+        $response = Gate::inspect('canDoIt','student_update');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        $student->load(['user','courses.course']);
+        if($student->user->status){
+            return abort(404);
+        }
+        return Inertia::render('admin/student/NewStudent',compact('student'));
     }
 
     /**
@@ -175,7 +185,27 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        //
+        $response = Gate::inspect('canDoIt','student_update');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        try{
+            $student->load(['user','courses']);
+            if($student->user->status){
+
+            }else{
+                if($student->courses()->update(['status'=>'ongoing']) && 
+                Payment::insert(['course_id'=> $student->courses[0]->id,
+                    'amount'=> $request->fees,
+                    'approve'=> true,
+                    'created_at'=> NOW()
+                ]) && $student->user()->update(['status'=>true])){
+                    return redirect()->route('students.index');
+                }
+            }
+        }catch(Throwable $err){
+            dd($err->getMessage());
+        }
     }
 
     /**
@@ -186,12 +216,31 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $response = Gate::inspect('canDoIt','student_delete');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        try{
+            $file = str_replace('storage','public',$student->user->avatar);
+            if(Storage::delete($file)){
+                User::where('id',$student->user_id)->delete();
+                StudentHasCourse::where('student_id',$student->id)->delete();
+                DB::table('role_user')->where('user_id', $student->user_id)->delete();
+                $student->delete();
+                return redirect()->route('students.index');
+            }
+        }catch(Throwable $err){
+            dd($err->getMessage());
+        }
     }
 
     // Student Has Course
 
     public function course(Request $request){
+        $response = Gate::inspect('canDoIt','student_update');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
         try{
             if ($request->file('attachment')->isValid()) {
                 $fileName = 'student-'.$request->student_id.'-'.$request->course_id.'.'.$request->attachment->extension();

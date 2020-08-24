@@ -1,5 +1,5 @@
 <template>
-    <Layout title="Users">
+    <Layout title="Student Managemant">
         <v-data-table :headers="headers" class="elevation-1" :items="studentsOnly" :search="search" hide-default-footer multi-sort>
           <template v-slot:top>
             <v-toolbar flat color="white">
@@ -8,11 +8,11 @@
               <v-spacer></v-spacer>
               <v-text-field v-model="search" ppend-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
               <v-spacer></v-spacer>
-              <v-dialog v-model="requestDialog" max-width="600">
+              <v-dialog scrollable v-model="requestDialog" max-width="600">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark
-                    class="mb-2" v-bind="attrs" v-on="on"
-                  >Request List</v-btn>
+                  <v-badge bottom left :content="requestStudent.length ? requestStudent.length : 0" :value="requestStudent.length ? requestStudent.length : 0">
+                    <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Request List</v-btn>
+                  </v-badge>
                 </template>
                 <v-card>
                 <v-tabs v-model="tab" background-color="primary" dark >
@@ -23,15 +23,16 @@
                 <v-tabs-items v-model="tab">
                   <v-tab-item>
                     <v-card flat>
-                      <v-card-text>
-                        <div class="d-flex">
+                      <v-card-text style="max-height: 300px;">
+                        <div v-if="requestStudent.length == 0" class="text-h6 text-center">No Student available</div>
+                        <div class="d-flex border-bottom align-center" v-else v-for="(student,i) in requestStudent" :key="i">
                           <v-avatar size="50px">
-                            <v-img :src="$page.baseUrl+'storage/images/student/student1.jpeg'"></v-img>
+                            <v-img :src="$page.baseUrl+student.user.avatar"></v-img>
                           </v-avatar>
                           <div class="ml-3 font-weight-bold">
-                            <a class="text-h6">Yeasir Arafat</a>
-                            <div>E-mail : mdyarafat@gmail.com<br/>
-                            Number : 01828715366
+                            <a :href="$route('students.edit',student.id)" class="text-h6">{{student.user.name}}</a>
+                            <div>E-mail : {{student.user.email}}<br/>
+                            Number : {{student.number}}
                             </div>
                           </div>
                         </div>
@@ -152,19 +153,19 @@
                             <tbody>
                               <tr v-for="(payment,i) in item.payment" :key="i">
                                 <td>{{payment.created_at}}</td>
-                                <td>{{payment.amount}}</td>
+                                <td>{{payment.amount}} tk</td>
                               </tr>
                               <tr style="border-top: 1px solid #6f7172">
                                 <td>Pay Amount</td>
-                                <td>{{totalPay}}</td>
+                                <td>{{totalPay}} tk</td>
                               </tr>
                               <tr>
                                 <td>Course Fees</td>
-                                <td>(-){{item.course.fees}}</td>
+                                <td>(-){{item.course.fees}} tk</td>
                               </tr>
                               <tr style="border-top: 1px solid #6f7172">
                                 <td>Deu Amount</td>
-                                <td>{{ totalPay - item.course.fees }}</td>
+                                <td>{{ totalPay - item.course.fees }} tk</td>
                               </tr>
                             </tbody>
                           </table>
@@ -211,7 +212,8 @@ export default {
         student_id: 0,
         attachment: []
       },
-      ongoingCourse: []
+      ongoingCourse: [],
+      requestStudent: []
     }),
     props: ['students'],
     mounted(){
@@ -223,6 +225,8 @@ export default {
         this.students.data.forEach(student =>{
           if(student.user.status){
             this.studentsOnly.push(student);
+          }else{
+            this.requestStudent.push(student);
           }
         });
         let role  = new Auth(this.$page.auth.roles);
@@ -349,5 +353,8 @@ export default {
     border: none;
     text-align: center;
     color: #f1f3f6 !important;
+  }
+  .border-bottom{
+    border-bottom: 1px solid #6f7172;
   }
 </style>
