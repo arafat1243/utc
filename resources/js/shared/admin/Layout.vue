@@ -209,7 +209,7 @@ import Auth from '@/auth'
                         },
                     ]
                 },
-                { title: 'Batch', icon: 'mdi-clipboard-list',path: this.$route('gallery.index'), can: this.role.can(['batch_create','batch_view','batch_update','gallery_delete'])
+                { title: 'Batch', icon: 'mdi-clipboard-list',path: this.$route('batches.index'), can: this.role.can(['batch_create','batch_view','batch_update','gallery_delete'])
                 },
                 { title: 'Gallery&Slide', icon: 'mdi-image-multiple ',path: this.$route('gallery.index'), can: this.role.can(['gallery_create','gallery_view','gallery_update','gallery_delete'])
                 },

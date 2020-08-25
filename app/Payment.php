@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 class Payment extends Model
 {
     protected $guarded = [];
-    public $timestamp = false;
+    public $timestamps = false;
     public function getCreatedAtAttribute($date)
     {
         return Carbon::parse($date)->format('d-m-Y');

@@ -265,18 +265,7 @@ export default {
           this.form.fees = ''
           this.categorys.forEach(category => {
             if(category.value === val && category.courses){
-                category.courses.forEach(course =>{
-                    this.courses.push({
-                        'text': course.title,
-                        'value': course.id,
-                        'course_duration': course.course_duration,
-                        'class_duration': course.class_duration,
-                        'class_count': course.class_count,
-                        'fees': course.fees,
-                        'pay_amount': Math.floor(course.fees / 3),
-                        'due_amount': Math.floor(course.fees - (course.fees / 3))
-                    })
-                })
+                this.courses = category.courses;
             }
         });
       },

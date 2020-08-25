@@ -80,5 +80,8 @@ use Inertia\Inertia;
             Route::resource('/students','StudentController',['except' => ['create', 'store','update']])->middleware('can:canDoIt,"student_view:student_delete:student_update"');
             Route::post('/students/{student}','StudentController@update')->name('students.update')->middleware('can:canDoIt,"student_update"');
             Route::post('/student/','StudentController@course')->name('students.course')->middleware('can:canDoIt,"student_update"');
+
+            Route::resource('/batches','BatchController',['except' => ['show','create', 'edit','update']])->middleware('can:canDoIt,"batch_create:batch_view:batch_delete"');
+            Route::post('/batches/{batch}','BatchController@update')->name('review.update')->middleware('can:canDoIt,"batch_update"');
         });
     });

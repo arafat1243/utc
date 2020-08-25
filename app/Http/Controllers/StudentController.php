@@ -48,7 +48,17 @@ class StudentController extends Controller
             return [
                 'text' => $category->title,
                 'value' => $category->id,
-                'courses' => $category->courses
+                'courses' => $category->courses->map(function($course){
+                    return [
+                    'text'=>$course->title,
+                    'value'=> $course->id,
+                    'course_duration'=>$course->course_duration,
+                    'class_duration'=>$course->class_duration,
+                    'class_count'=>$course->class_count,
+                    'fees'=>$course->fees,
+                    'category'=> $course->category->id
+                ];
+                })
             ];
         });
         $course = [];

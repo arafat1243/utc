@@ -10,7 +10,7 @@
               <v-spacer></v-spacer>
               <v-dialog scrollable v-model="requestDialog" max-width="600">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-badge bottom left :content="requestStudent.length ? requestStudent.length : 0" :value="requestStudent.length ? requestStudent.length : 0">
+                  <v-badge bottom left :content="requestStudent.length" :value="requestStudent.length">
                     <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Request List</v-btn>
                   </v-badge>
                 </template>
