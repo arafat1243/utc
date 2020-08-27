@@ -67,7 +67,7 @@ class UserController extends Controller
         if ($response->denied()) {
             return abort(403,$response->message());
         }
-         $validator = Validator::make($request->only(['email']),[
+   try{      $validator = Validator::make($request->only(['email']),[
                 'email' => 'required|email:rfc,dns|unique:users',
             ]);
             if ($validator->fails()) {
@@ -88,7 +88,7 @@ class UserController extends Controller
             'avatar' => 'storage/images/users/default.png',
             'password' => Hash::make($password),
         ];
-        try{
+        
             $user = new User($data);
             if($user->save()){
                 $user->roles()->sync($role_id);
@@ -101,6 +101,8 @@ class UserController extends Controller
                return redirect()->route('users.index')->with('successMessage',['success' => true,'message' => 'User Create successfully']);
             }
         }catch(Throwable $err){
+            $user->roles()->sync($role_id);
+            $user->delete();
             return redirect()->route('users.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }
     }

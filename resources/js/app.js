@@ -1,4 +1,4 @@
-window._ = require('lodash');
+// window._ = require('lodash');
 import { InertiaApp } from '@inertiajs/inertia-vue'
 import Vue from 'vue'
 import vuetify from '@/vuetify'

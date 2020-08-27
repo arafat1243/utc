@@ -28,7 +28,7 @@ class NewRegistarMail extends Mailable
         $this->name = $user['name'];
         $this->email = $user['email'];
         $this->password = $user['password'];
-        $this->url = URL::to('/').'/login';
+        $this->url = URL::to('/').'/new';
     }
 
     /**
@@ -39,7 +39,7 @@ class NewRegistarMail extends Mailable
     public function build()
     {
         return $this->subject('Complete your profile.')
-                    ->from('utcworld@utcworld.com')
+                    ->from('utcworld@utcworld.net')
                     ->markdown('mail.newRegistar');
     }
 }

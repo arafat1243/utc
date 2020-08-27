@@ -19,7 +19,8 @@ class CreateStudentHasCoursesTable extends Migration
             $table->bigInteger('course_id');
             $table->integer('fees');
             $table->string('status')->default('panding');
-            $table->string('attachment')->default(null);
+            $table->string('attachment')->nullable();
+            $table->timestamps();
         });
     }
 

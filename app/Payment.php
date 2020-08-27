@@ -13,4 +13,9 @@ class Payment extends Model
     {
         return Carbon::parse($date)->format('d-m-Y');
     }
+
+    public function course(){
+        return $this->hasOne(Course::class,'id','course_id');
+    }
+    
 }

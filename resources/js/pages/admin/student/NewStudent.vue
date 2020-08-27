@@ -49,7 +49,7 @@
                     <v-icon left>mdi-close-circle</v-icon>
                     Delete
                 </v-btn>
-                <v-btn outlined color="success" @click="submit">
+                <v-btn outlined :loading="loding" color="success" @click="submit">
                     <v-icon left>mdi-check-circle</v-icon>
                     ok
                 </v-btn>
@@ -78,6 +78,7 @@ export default {
         fees: '',
         change: false,
         deleteDialog: false,
+        loding: false,
         error: ''
     }),
     props:['student'],
@@ -109,11 +110,12 @@ export default {
         },
         submit(){
           if(!this.error){
+            this.loding = true
             const formData = new FormData();
             formData.append('fees',this.fees);
             this.$inertia.post(this.$route('students.update',this.student.id),formData)
            .then(()=>{
-                  this.deleteDialog = false;           
+                  this.loding = false;           
             }).catch(err => {console.log(err)})
           }
         }

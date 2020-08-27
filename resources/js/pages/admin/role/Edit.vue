@@ -105,6 +105,13 @@ export default {
             delete: {value: 'client_cate_delete', select: false},
           },
           {
+            page: 'Batch',
+            view: {value: 'batch_view', select: false},
+            create: {value: 'batch_create', select: false},
+            update: {value: 'batch_update', select: false},
+            delete: { select: false},
+          },
+          {
             page: 'Gallery&Slide',
             view: {value: 'gallery_view', select: false},
             create: {value: 'gallery_create', select: false},

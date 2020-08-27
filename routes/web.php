@@ -15,7 +15,8 @@ use Inertia\Inertia;
 |
 */
     Route::get('/', function(){
-    return Inertia::render('public/Home');
+        Auth::logout();
+        return Inertia::render('public/Home');
     })->name('home');
 
     Route::get('/courses/{slug?}','PublicController@courses')->name('public.courses');
@@ -37,15 +38,15 @@ use Inertia\Inertia;
 
     Auth::routes(['register' => false]);
     Auth::routes(['verify' => true]);
+    Route::prefix('new')->middleware(['auth','can:isEmployee'])->group(function(){
+    Route::get('/',function(){
+        return Inertia::render('admin/user/Create'); 
+    })->name('users.newUser');
+    Route::post('/users','EmployeController@store')->name('users.store');
+    });
     Route::prefix('admin')->middleware(['auth','verified'])->group(function(){
-        Route::get('/users/new',function(){
-            return Inertia::render('admin/user/Create');
-        })->name('users.newUser')->middleware('can:isEmployee');
-        Route::post('/users/new','EmployeController@store')->name('users.store')->middleware('can:isEmployee');
-        Route::middleware('can:checkStatus')->group(function(){
-            Route::get('/',function(){
-                return Inertia::render('admin/Dashboard');
-            })->name('admin');
+            Route::get('/','DashboardController@index')->name('admin');
+            Route::middleware('can:checkStatus')->group(function(){ 
             Route::get('/users','UserController@index')->name('users.index')->middleware('can:isAdmin');
             Route::post('/users/{users}','UserController@addRoles')->name('users.addRole')->middleware('can:isAdmin');
             Route::post('/users','UserController@addUser')->name('users.addUser')->middleware('can:isAdmin');
@@ -82,6 +83,6 @@ use Inertia\Inertia;
             Route::post('/student/','StudentController@course')->name('students.course')->middleware('can:canDoIt,"student_update"');
 
             Route::resource('/batches','BatchController',['except' => ['show','create', 'edit','update']])->middleware('can:canDoIt,"batch_create:batch_view:batch_delete"');
-            Route::post('/batches/{batch}','BatchController@update')->name('review.update')->middleware('can:canDoIt,"batch_update"');
+            Route::post('/batches/{batch}','BatchController@update')->name('batches.update')->middleware('can:canDoIt,"batch_update"');
+            });
         });
-    });

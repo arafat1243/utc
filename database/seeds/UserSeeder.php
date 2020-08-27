@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
         DB::table('users')->insert([
             'name' => 'Yeasir Arafat',
             'email' => 'arafat@gmail.com',
+            'avatar' => 'storage/images/users/default.png',
             'email_verified_at' => Carbon\Carbon::now()->toDateTimeString(),
             'password' => Hash::make('password'),
             'status' => true,

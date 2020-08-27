@@ -69,7 +69,7 @@
                                         <v-radio label="Married" value="married"></v-radio>
                                     </v-radio-group>
                                 </div>
-                                    <v-text-field v-model="form.number" @input="onlyNumber" outlined label="Contact Number *" 
+                                    <v-text-field autocomplete="off" v-model="form.number" @input="onlyNumber" outlined label="Contact Number *" 
                                     @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
                                         if (keyCode < 48 || keyCode > 57) { // 46 is dot
                                             $event.preventDefault();
@@ -81,7 +81,7 @@
                                     <v-text-field v-model="form.father_name" @keypress="onlyChar"
                                     :rules="[v => !!v || 'Father\'s Name is required.',v => (v && (v.length >= 10 && v.length <= 40)) || 'Father\'s Name must be between 10-40 characters']"
                                      outlined label="Father's Name *" required></v-text-field>
-                                    <v-text-field v-model="form.emergency_number" @input="emNumber" @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+                                    <v-text-field autocomplete="off" v-model="form.emergency_number" @input="emNumber" @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
                                         if (keyCode < 48 || keyCode > 57) { // 46 is dot
                                             $event.preventDefault();
                                         }}" :error-messages="error.sameNum" :rules="[v=>!!v|| 'Number is requried.', v => (v && (v.length <= 12 && v.length >= 12)) || 'Number is not valid']" outlined label="Emergency Contact Number *" required></v-text-field>
@@ -227,7 +227,7 @@ export default {
       categoryId: '',
       courseInfo: {},
       confirm_password: '',
-      passwordConfirm: [],
+      passwordConfirm: '',
       passwordRules: [
             v=> !!v || 'Password is required', 
             v=> (v && v.length >= 6) || 'Password must have at least 6 letters.',
@@ -277,9 +277,9 @@ export default {
                         'course_duration': course.course_duration,
                         'class_duration': course.class_duration,
                         'class_count': course.class_count,
-                        'due_amount': course.due_amount
+                        'due_amount': Math.floor(course.fees - (course.fees / 3))
                   }
-                  this.form.pay_amount = course.pay_amount
+                  this.form.pay_amount = Math.floor(course.fees / 3)
                   this.form.fees = course.fees
                   this.form.courseId = this.courseId
               }
@@ -321,10 +321,10 @@ export default {
         this.success = this.$page.baseUrl+'storage/images/others/check.svg';
         if(this.course.length > 0){
             this.courseInfo  = {
-                        'course_duration': this.course[0].course_duration,
-                        'class_duration': this.course[0].class_duration,
-                        'class_count': this.course[0].class_count,
-                        'due_amount': Math.floor(this.course[0].fees - (this.course[0].fees / 3))
+                    'course_duration': this.course[0].course_duration,
+                    'class_duration': this.course[0].class_duration,
+                    'class_count': this.course[0].class_count,
+                    'due_amount': Math.floor(this.course[0].fees - (this.course[0].fees / 3))
                   }
                   this.form.pay_amount = Math.floor(this.course[0].fees / 3)
                   this.form.fees = this.course[0].fees
@@ -382,19 +382,21 @@ export default {
         },
       matchPassword(value){
             if(this.form.password !== value){
-                this.passwordConfirm.push('password are not identical');
+                this.passwordConfirm = 'password are not identical';
             }else{
-                this.passwordConfirm = [];
+                this.passwordConfirm = '';
             }
         },
         submit(){
             if((this.step === 1 && this.$refs.personalInfo.validate() && this.error.dob === '' && this.error.sameNum === '')
-             || (this.step === 2 && this.$refs.accountInfo.validate() && this.passwordConfirm.length === 0) || (this.step === 3 && this.$refs.courseInfo.validate())) {
+             || (this.step === 2 && this.$refs.accountInfo.validate() && this.passwordConfirm== '') || (this.step === 3 && this.$refs.courseInfo.validate())) {
                 this.$vuetify.goTo('#scroll-target', {duration: 200,offset: 300, easing: 'easeInOutCubic'});
                 if(this.step !==3){
                     this.step++
                 }else{
-                    let formData = new FormData();
+                    if(this.$refs.personalInfo.validate() && this.error.dob == '' && this.error.sameNum == '' &&
+                     this.$refs.accountInfo.validate() && this.passwordConfirm == '' && this.$refs.courseInfo.validate()){
+                        let formData = new FormData();
                     for(const data in this.form){
                         formData.append(data,this.form[data])
                     }
@@ -415,7 +417,8 @@ export default {
                                 this.$refs.courseInfo.reset();
                                 this.step = 4
                             }
-                            else if(this.$page.errors){
+                            else if(this.$page.errors != null){
+                                console.log(this.$page.errors);
                                 if(this.$page.errors.email){
                                     this.errorMessage = this.$page.errors.email[0];
                                 }
@@ -431,7 +434,8 @@ export default {
                             else{
                                 this.snackbar = true;
                             }
-                        }).catch(err => console.log(err))
+                        }).catch(err => console.dir(err))
+                    }
                 }
             }
         },

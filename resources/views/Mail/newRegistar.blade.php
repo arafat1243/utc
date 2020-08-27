@@ -13,11 +13,12 @@
 @component('mail::button', ['url' => $url,'color' => 'success'])
 Complete Your Profile
 @endcomponent
-Thanks,<br>
+Regards,<br>
 {{ config('app.name') }}
 @endcomponent
 <style>
     .title{
         margin: 20px 0;
+        text-transform: capitalize;
     }
 </style>

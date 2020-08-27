@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Course;
 use App\CourseCategory;
+use App\Mail\NewStudentMail;
 use App\Payment;
 use App\Role;
 use App\Student;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -86,7 +88,7 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        
             // dd($request);
             $validator = Validator::make($request->only(['email','number','emergency_number']),[
                 'email' => 'required|email:rfc,dns|unique:users',
@@ -97,7 +99,7 @@ class StudentController extends Controller
                 return redirect()->route('public.apply.create')
                             ->withErrors($validator);
             }
-            $path = '';
+           try{ $path = '';$user = ''; $course = '';$studentRole = 0;
             if ($request->file('avatar')->isValid()) {
                 $fileName = 'student-'.(Student::count()+1).'.'.$request->avatar->extension();
                 $path = $request->avatar->storeAs('images/student', $fileName,'public');
@@ -131,12 +133,12 @@ class StudentController extends Controller
                     $student = new Student($data);
                         if($student->save())
                         {
-                            $course = new StudentHasCourse();
-                            $course->insert([
+                            $course = new StudentHasCourse([
                                 'student_id' => $student->id,
                                 'course_id' => $request->courseId,
                                 'fees' => $request->fees
                             ]);
+                            $course->save();
                             $user->roles()->sync($studentRole);
                             return  redirect()->route('public.apply.create')->with('successMessage',['success' => true,'message' => 'fg']);
                         }
@@ -149,8 +151,9 @@ class StudentController extends Controller
         }catch(Throwable $err){
             if($path){
                 Storage::delete('public/'.$path);
+                $user->roles()->sync($studentRole);
                 $user->delete();
-                $student->delete();
+                $course->delete();
             }
             return redirect()->route('public.apply.create')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }
@@ -200,16 +203,24 @@ class StudentController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $student->load(['user','courses']);
+            $student->load(['user','courses.course']);
             if($student->user->status){
 
             }else{
                 if($student->courses()->update(['status'=>'ongoing']) && 
-                Payment::insert(['course_id'=> $student->courses[0]->id,
+                Payment::insert([
+                    'course_id'=> $student->courses[0]->course->id,
+                    'st_has_co_id'=> $student->courses[0]->id,
                     'amount'=> $request->fees,
                     'approve'=> true,
                     'created_at'=> NOW()
                 ]) && $student->user()->update(['status'=>true])){
+                    Mail::to($student->user->email)->send(new NewStudentMail([
+                        'name'=>$student->user->name,
+                        'course'=>$student->courses[0]->course->title,
+                        'image'=>$student->courses[0]->course->banner_img,
+                        'email' => $student->user->email
+                    ]));
                     return redirect()->route('students.index');
                 }
             }
@@ -257,9 +268,10 @@ class StudentController extends Controller
                 $path = $request->attachment->storeAs('images/attachment', $fileName,'public');
                 if($path){
                     $course = StudentHasCourse::where('student_id',$request->student_id)
-                            ->where('course_id',$request->course_id)
-                            ->update(['status'=> 'complete','attachment'=> 'storage/'.$path]);
-                    if($course){
+                            ->where('course_id',$request->course_id);
+                    $course->status = 'complete';
+                    $course->attachment = 'storage/'.$path;
+                    if($course->save()){
                         return redirect()->route('students.index')->with('successMessage',['success' => true,'message' => 'Attachment added successfull']);
                     }
                     else{

@@ -69,7 +69,7 @@
       <v-menu v-model="menu" bottom right transition="scale-transition" origin="top right">
             <template v-slot:activator="{ on }">
                <v-btn icon large v-on="on">
-                                <v-avatar size="80px" item>
+                                <v-avatar size="50px" item>
                                     <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
                                 </v-avatar>
                             </v-btn>
@@ -163,7 +163,7 @@ import Auth from '@/auth'
                 { title: 'Dashboard', icon: 'mdi-view-dashboard ', path: this.$route('admin'),can: true },
                 { title: 'Users', icon: 'mdi-account-group', path: this.$route('users.index'), can: this.role.isAdmin() },
                 { title: 'Student', icon: 'mdi-card-account-details ', path: this.$route('students.index'), can: this.role.can([
-                    'student_view','student_update'
+                    'student_view','student_update','student_delete'
                 ]) },
                 { title: 'Roles', icon: 'mdi-account-cog',can: this.role.isAdmin(),
                     items:[

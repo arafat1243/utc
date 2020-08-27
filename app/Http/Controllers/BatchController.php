@@ -6,6 +6,7 @@ use App\Batch;
 use App\Course;
 use App\CourseCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Throwable;
 
@@ -18,6 +19,10 @@ class BatchController extends Controller
      */
     public function index()
     {
+        $response = Gate::inspect('canDoIt','batch_view:batch_create:batch_update:batch_delete');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
         $categorys = CourseCategory::with('courses')->orderBy('id','desc')->get(['id','title'])->map(function($category){
             return [
                 'text' => $category->title,
@@ -47,17 +52,6 @@ class BatchController extends Controller
         });
         return Inertia::render('admin/batch/Index',compact(['batches','categorys']));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -66,14 +60,18 @@ class BatchController extends Controller
      */
     public function store(Request $request)
     {
+        $response = Gate::inspect('canDoIt','batch_create');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
         try{
-            $valid = Batch::where('course_id',$request->course_id)->where('batch_no',$request->batch_no)->first();
-            if($valid){
-                return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => 'This Batch is already exists']);
-            }
+            $valid = Batch::where('course_id',$request->course_id)
+                    ->get(['batch_no'])->transform(function($batch){
+                        return $batch->batch_no;
+                    });
             $data = [
                 'course_id' => $request->course_id,
-                'batch_no' => $request->batch_no,
+                'batch_no' => $valid->last()+1,
                 'started_at' => $request->stated_at,
                 'ended_at' => $request->ended_at,
             ];
@@ -87,29 +85,6 @@ class BatchController extends Controller
             return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Batch  $batch
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Batch $batch)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Batch  $batch
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Batch $batch)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -119,7 +94,19 @@ class BatchController extends Controller
      */
     public function update(Request $request, Batch $batch)
     {
-        //
+        $response = Gate::inspect('canDoIt','batch_update');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        try{
+            $batch->ended_at = $request->ended_at;
+            if($batch->save()){
+                return redirect()->route('batches.index')->with('successMessage',['success' => true,'message' => 'Batch updated Successfull']);
+            }
+            return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => 'Batch updated Failed']);
+        }catch(Throwable $err){
+            return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
+        }
     }
 
     /**
@@ -130,6 +117,17 @@ class BatchController extends Controller
      */
     public function destroy(Batch $batch)
     {
-        //
+        $response = Gate::inspect('canDoIt','batch_delete');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
+        try{
+            if($batch->delete()){
+                return redirect()->route('batches.index')->with('successMessage',['success' => true,'message' => 'Batch Deleted Successfull']);
+            }
+            return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => 'Batch Delete Failed']);
+        }catch(Throwable $err){
+            return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
+        }
     }
 }
