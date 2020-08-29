@@ -7,6 +7,7 @@ use App\Course;
 use App\Gallery;
 use App\Review;
 use App\Service;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\URL;
 
@@ -20,7 +21,7 @@ class PublicController extends Controller
            })->get()->toArray();
             return Inertia::render('public/Clients',compact('clients'));
        }else{
-            $clients = Client::orderBy('id','desc')->first();
+            $clients = Client::orderBy('id','desc')->get()->toArray();
             if(!$clients){
                 $clients = [];
             }
@@ -106,5 +107,14 @@ class PublicController extends Controller
            }
             return abort(404,'Not Found');
        }
+    }
+
+    public function details(Request $request, $id){
+        $course  = Course::findOrFail($id);
+        $batch_id = '';
+        if($request->has('batch_id')){
+            $batch_id = $request->batch_id;
+        }
+        return Inertia::render('public/Details',compact('course','batch_id'));
     }
 }

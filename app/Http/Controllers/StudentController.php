@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Batch;
 use App\Course;
 use App\CourseCategory;
 use App\Mail\NewStudentMail;
 use App\Payment;
 use App\Role;
+use App\StidentHasBatch;
 use App\Student;
 use App\StudentHasCourse;
 use App\User;
@@ -44,7 +46,7 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($id = null)
+    public function create($id,$batch_id = null)
     {
         $categorys = CourseCategory::with(['courses'])->get(['id','title'])->map(function($category){
             return [
@@ -63,8 +65,6 @@ class StudentController extends Controller
                 })
             ];
         });
-        $course = [];
-        if($id){
             $course = Course::with('category')->where('id',$id)->get()->map(function($course){
                 return [
                     'text'=>$course->title,
@@ -76,8 +76,7 @@ class StudentController extends Controller
                     'category'=> $course->category->id
                 ];
             });
-        }
-        return Inertia::render('public/Apply',compact(['categorys','course']));
+        return Inertia::render('public/Apply',compact('categorys','course','batch_id'));
     }
 
     /**
@@ -89,17 +88,24 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         
-            // dd($request);
-            $validator = Validator::make($request->only(['email','number','emergency_number']),[
+        try{    $validator = Validator::make($request->only(['email','number','emergency_number']),[
                 'email' => 'required|email:rfc,dns|unique:users',
                 'number' => 'required|unique:students',
                 'emergency_number' => 'required|unique:students',
             ]);
             if ($validator->fails()) {
-                return redirect()->route('public.apply.create')
+                return  redirect()->route('public.apply.create',['courseId'=>$request->courseId,'batchId'=>$request->batch_id])
                             ->withErrors($validator);
             }
-           try{ $path = '';$user = ''; $course = '';$studentRole = 0;
+            $batch_id = false;
+            if($request->has('batch_id')){
+                $batch_id = Batch::withCount('students')
+                    ->findOrFail($request->batch_id);
+                if($batch_id->capacity < $batch_id->students_count){
+                        return true;
+                }
+            }
+            $path = '';$user = ''; $course = '';$studentRole = 0;
             if ($request->file('avatar')->isValid()) {
                 $fileName = 'student-'.(Student::count()+1).'.'.$request->avatar->extension();
                 $path = $request->avatar->storeAs('images/student', $fileName,'public');
@@ -138,13 +144,20 @@ class StudentController extends Controller
                                 'course_id' => $request->courseId,
                                 'fees' => $request->fees
                             ]);
+                            if($batch_id){
+                                $batch = new StidentHasBatch([
+                                    'student_id' => $student->id,
+                                    'batch_id' => $request->batch_id
+                                ]);
+                                $batch->save();
+                            }
                             $course->save();
                             $user->roles()->sync($studentRole);
-                            return  redirect()->route('public.apply.create')->with('successMessage',['success' => true,'message' => 'fg']);
+                            return  redirect()->route('public.apply.create',['courseId'=>$request->courseId,'batchId'=>$request->batch_id])->with('successMessage',['success' => true,'message' => 'fg']);
                         }
                         
                     }else{
-                        return redirect()->route('public.apply.create')->with('successMessage',['success' => false,'message' => 'There is some error. Please try again later.']);
+                        return redirect()->route('public.apply.create',['courseId'=>$request->courseId,'batchId'=>$request->batch_id])->with('successMessage',['success' => false,'message' => 'There is some error. Please try again later.']);
                     }
                 }
             }
@@ -153,9 +166,11 @@ class StudentController extends Controller
                 Storage::delete('public/'.$path);
                 $user->roles()->sync($studentRole);
                 $user->delete();
-                $course->delete();
+                if($course){
+                    $course->delete();
+                }
             }
-            return redirect()->route('public.apply.create')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
+            return redirect()->route('public.apply.create',['courseId'=>$request->courseId,'batchId'=>$request->batch_id])->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }
     }
 

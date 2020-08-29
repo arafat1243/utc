@@ -11,4 +11,8 @@ class Batch extends Model
     public function course(){
         return $this->hasOne(Course::class,'id','course_id');
     }
+
+    public function students(){
+        return $this->hasManyThrough(Student::class,StidentHasBatch::class,'batch_id','id','id','student_id');
+    }
 }

@@ -18,4 +18,7 @@ class Payment extends Model
         return $this->hasOne(Course::class,'id','course_id');
     }
     
+    public function student(){
+        return $this->hasOneThrough(Student::class,StudentHasCourse::class,'id','id','st_has_co_id','student_id');
+    }
 }

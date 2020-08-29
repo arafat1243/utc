@@ -35,7 +35,7 @@ class BatchController extends Controller
                 })
             ];
         });
-        $batches = Batch::with(['course'=>function($qu){
+        $batches = Batch::withCount('students')->with(['course'=>function($qu){
             $qu->select('id','title');
         }]
         )->orderBy('id','desc')
@@ -45,9 +45,10 @@ class BatchController extends Controller
                 'id'=> $batch->id,
                 'name' =>$batch->course->title,
                 'batch_no' => $batch->batch_no,
-                'started_at' => $batch->started_at,
-                'ended_at' => $batch->ended_at,
-                'status' => $batch->ended_at
+                'start_at' => $batch->start_at,
+                'last_at' => $batch->last_at,
+                'capacity' => $batch->capacity,
+                'status' => $batch->capacity - $batch->students_count
             ];
         });
         return Inertia::render('admin/batch/Index',compact(['batches','categorys']));
@@ -71,9 +72,10 @@ class BatchController extends Controller
                     });
             $data = [
                 'course_id' => $request->course_id,
+                'capacity' => $request->capacity,
                 'batch_no' => $valid->last()+1,
-                'started_at' => $request->stated_at,
-                'ended_at' => $request->ended_at,
+                'last_at' => $request->last_at,
+                'start_at' => $request->start_at,
             ];
 
             $batch = new Batch($data);
@@ -99,7 +101,13 @@ class BatchController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $batch->ended_at = $request->ended_at;
+            $batch->loadCount('students');
+            if($request->capacity < $batch->students_count){
+                return redirect()->route('batches.index')->with('successMessage',['success' => false,'message' => 'This batch is full. You can\'t Decrease Sit']);
+            }
+            $batch->capacity = $request->capacity;
+            $batch->last_at = $request->last_at;
+            $batch->start_at = $request->start_at;
             if($batch->save()){
                 return redirect()->route('batches.index')->with('successMessage',['success' => true,'message' => 'Batch updated Successfull']);
             }

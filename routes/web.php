@@ -14,10 +14,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-    Route::get('/', function(){
-        Auth::logout();
-        return Inertia::render('public/Home');
-    })->name('home');
+    Route::get('/', 'HomeController@index')->name('home');
 
     Route::get('/courses/{slug?}','PublicController@courses')->name('public.courses');
 
@@ -30,10 +27,11 @@ use Inertia\Inertia;
     Route::get('/pages/{slug?}','PublicController@pages')->name('public.pages');
 
     Route::get('/about/{slug?}','PublicController@about')->name('public.about');
+    Route::get('/details/{slug}','PublicController@details')->name('public.details');
 
     Route::post('/review','ReviewController@store')->name('public.review.store');
 
-    Route::get('/apply/{courseId?}','StudentController@create')->name('public.apply.create');
+    Route::get('/apply/{courseId}/{batchId?}','StudentController@create')->name('public.apply.create');
     Route::post('/apply}','StudentController@store')->name('public.apply.store');
 
     Auth::routes(['register' => false]);
@@ -84,5 +82,7 @@ use Inertia\Inertia;
 
             Route::resource('/batches','BatchController',['except' => ['show','create', 'edit','update']])->middleware('can:canDoIt,"batch_create:batch_view:batch_delete"');
             Route::post('/batches/{batch}','BatchController@update')->name('batches.update')->middleware('can:canDoIt,"batch_update"');
-            });
+
+
         });
+    });

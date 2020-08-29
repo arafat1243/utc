@@ -12,4 +12,7 @@ class Course extends Model
         return $this->belongsTo(CourseCategory::class,'cat_id');
     }
 
+    public function batches(){
+        return $this->hasMany(Batch::class);
+    }
 }

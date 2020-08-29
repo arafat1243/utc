@@ -25,21 +25,29 @@
                             <v-select label="Course Name" :items="courses" v-model="formData.course_id" :rules="[v=>!!v || 'Course Name is required']" outlined required></v-select>
                           </v-col>     
                           <v-col cols="12">
+                            <v-text-field label="Maximum Sit" autocomplete="off"
+                            @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+                                        if (keyCode < 48 || keyCode > 57) { // 46 is dot
+                                            $event.preventDefault();
+                                        }}"
+                             v-model="formData.capacity" :rules="[v=>!!v || 'Number of Sit is required']" outlined required></v-text-field>
+                          </v-col>     
+                          <v-col cols="12">
                             <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition"
                               offset-y max-width="290px" min-width="290px"
                             >
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
-                                  v-model="start_date"
-                                  label="Start Date"
+                                  v-model="last_date"
+                                  label="Last Date of Admission"
                                   readonly
                                   v-bind="attrs"
                                   v-on="on"
                                   outlined
-                                  :rules="[v => !!v || 'Start Date is requried']"
+                                  :rules="[v => !!v || 'Date is requried']"
                                 ></v-text-field>
                               </template>
-                              <v-date-picker :min="new Date().toISOString().substr(0, 10)" v-model="start_date" no-title @input="menu = false"></v-date-picker>
+                              <v-date-picker :min="new Date(new Date().getTime()+(5*24*60*60*1000)).toISOString().substr(0, 10)" v-model="last_date" no-title @input="menu = false"></v-date-picker>
                             </v-menu>
                           </v-col>   
                           <v-col cols="12">
@@ -48,16 +56,16 @@
                             >
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
-                                  v-model="end_date"
-                                  label="End Date"
+                                  v-model="formData.start_at"
+                                  label="Course start Date"
                                   readonly
                                   v-bind="attrs"
                                   v-on="on"
                                   outlined
-                                  :rules="[v => !!v || 'End Date is requried']"
+                                  :rules="[v => !!v || 'Date is requried']"
                                 ></v-text-field>
                               </template>
-                              <v-date-picker :min="selectDate" v-model="end_date" no-title @input="menu2 = false"></v-date-picker>
+                              <v-date-picker :min="selectDate" v-model="formData.start_at" no-title @input="menu2 = false"></v-date-picker>
                             </v-menu>
                           </v-col>   
                         </v-row>
@@ -65,7 +73,7 @@
                    </v-card-text>
                     <v-card-actions class="white">
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="close">cancle</v-btn>
+                      <v-btn text color="primary" @click="()=>{close();$refs.batchForm.reset();}">cancle</v-btn>
                       <v-btn text color="primary" type="submint">Save</v-btn>
                     </v-card-actions>
                     </v-card>
@@ -76,24 +84,38 @@
           </template>
           <template v-slot:item.actions="{ item }">
             <div class="d-flex">
-              <div v-for="(ui,i) in uiManage" :key="i">
-                <v-tooltip bottom v-if="ui.can"> 
+              <div>
+                <v-tooltip bottom v-if="role.can('batch_update')"> 
                   <template v-slot:activator="{ on, attrs }">
-                    <v-icon small class="mr-2" :color="ui.color"
-                     @click="ui.text === 'Edit' ? editedItem(item) : deleteItem(item)" v-bind="attrs" v-on="on">
-                      {{ui.icon}}
+                    <v-icon small class="mr-2" color="success"
+                     @click="editedItem(item)" v-bind="attrs" v-on="on">
+                      mdi-pencil
                     </v-icon>
                   </template>
-                  <span>{{ui.text}}</span>
+                  <span>Edit</span>
+                </v-tooltip>
+              </div>
+              <div>
+                <v-tooltip bottom v-if="role.can('batch_delete') && (item.capacity == item.status)"> 
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon small class="mr-2" color="error"
+                     @click="deleteItem(item)" v-bind="attrs" v-on="on">
+                      mdi-delete
+                    </v-icon>
+                  </template>
+                  <span>Delete</span>
                 </v-tooltip>
               </div>
             </div>
           </template>
           <template v-slot:item.status="{ item }">
-            <v-chip :color="getColor(item.status)">{{getText(item.status)}}</v-chip>
+            <v-chip :color="getColor(item.status)">{{item.status}}</v-chip>
           </template>
           <template v-slot:item.batch_no="{ item }">
             <v-chip color="primary">{{item.batch_no}}</v-chip>
+          </template>
+          <template v-slot:item.capacity="{ item }">
+            <v-chip color="info">{{item.capacity}}</v-chip>
           </template>
         </v-data-table>
         <v-dialog v-model="editDialog"  max-width="500">
@@ -101,19 +123,48 @@
             <v-card>
               <v-card-title>Edit Batch</v-card-title>
               <v-card-text>
-                <v-menu v-model="menu3" :close-on-content-click="false" transition="scale-transition"
+                            <v-text-field label="Maximum Sit" autocomplete="off"
+                            @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+                                        if (keyCode < 48 || keyCode > 57) { // 46 is dot
+                                            $event.preventDefault();
+                                        }}"
+                             v-model="editItem.capacity" :rules="[v=>!!v || 'Number of Sit is required']" outlined required></v-text-field>   
+                            <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition"
                               offset-y max-width="290px" min-width="290px"
                             >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field v-model="date3" label="End Date" readonly
-                        v-bind="attrs" v-on="on" outlined :rules="[v => !!v || 'End Date is requried']"></v-text-field>
-                    </template>
-                  <v-date-picker :min="selectDate" v-model="date3" no-title @input="menu3 = false"></v-date-picker>
-                </v-menu>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editlast_date"
+                                  label="Last Date of Admission"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  outlined
+                                  :rules="[v => !!v || 'Date is requried']"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker :min="editItem.last_at ? new Date(editItem.last_at).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10)" v-model="editlast_date" no-title @input="menu = false"></v-date-picker>
+                            </v-menu>
+                            <v-menu v-model="menu2" :close-on-content-click="false" transition="scale-transition"
+                              offset-y max-width="290px" min-width="290px"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="editItem.start_at"
+                                  label="Course start Date"
+                                  readonly
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  outlined
+                                  :rules="[v => !!v || 'Date is requried']"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker :min="selectDate" v-model="editItem.start_at" no-title @input="menu2 = false"></v-date-picker>
+                            </v-menu>
               </v-card-text>
               <v-card-actions class="white">
                 <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="close">cancle</v-btn>
+                  <v-btn text color="primary" @click="()=>{close();$refs.editForm.reset();}">cancle</v-btn>
                   <v-btn text color="primary" type="submint">Save</v-btn>
                 </v-card-actions>
               </v-card>
@@ -149,16 +200,17 @@ import Auth from '@/auth'
 import Pagination from '@/shared/admin/components/Pagination'
 export default {
     data: vm=>({
-      start_date: '',
-      end_date: '',
+      last_date: '',
+      editlast_date: '',
       date3: '',
         batchesOnly: [],
         headers:[
             {text: 'Course Name',value: 'name',align: 'left'},
             {text: 'Batch No',value: 'batch_no'},
-            {text: 'Stated At',value: 'started_at'},
-            {text: 'Ended At',value: 'ended_at'},
-            {text: 'Status',value: 'status',align: 'center'},
+            {text: 'Last Date',value: 'last_at'},
+            {text: 'Stat Date',value: 'start_at'},
+            {text: 'Total Sit',value: 'capacity'},
+            {text: 'Available Sit',value: 'status'},
             {text: 'Actions',value: 'actions', sortable: false},
         ],
         uiManage:[],
@@ -179,19 +231,17 @@ export default {
     }),
     props:['batches','categorys'],
     watch: {
-      start_date (val) {
+      last_date(val){
         if(val){
-          let date = val.split('-');
-          date = parseInt(date[2]) + 4;
-          this.selectDate = val.slice(0, -2)+date;
-          this.formData.stated_at = val
+          this.selectDate = new Date(new Date(val).getTime()+(2*24*60*60*1000)).toISOString().substr(0, 10);
+          this.formData.last_at = val;
         }
       },
-      end_date (val) {
-        this.formData.ended_at = val
-      },
-      date3 (val) {
-        this.editItem.ended_at = val
+      editlast_date(val){
+        if(val){
+          this.selectDate = new Date(new Date(val).getTime()+(2*24*60*60*1000)).toISOString().substr(0, 10);
+          this.editItem.last_at = val;
+        }
       },
       category(val){
         this.courses = []
@@ -209,10 +259,6 @@ export default {
     methods:{
         init(){
             this.batchesOnly = this.batches.data
-              this.uiManage = [
-              {text: 'Edit',icon: 'mdi-pencil', color: 'success',can: this.role.can('batch_update')},
-              {text: 'Delete',icon: 'mdi-delete', color: 'error',can: this.role.can('batch_delete')},
-          ]
         },
       close(){
         this.dialog = false
@@ -235,7 +281,6 @@ export default {
               if(this.$page.successMessage.success){
                 this.init();
                 this.close();
-                this.$refs.batchForm.reset();
               }
             }).catch(err => console.log(err));
         }
@@ -243,7 +288,9 @@ export default {
       update(){
         if(this.$refs.editForm.validate()){
           let formData = new FormData();
-          formData.append('ended_at',this.editItem.ended_at);
+          for(const data in this.editItem){
+            formData.append(data,this.editItem[data])
+          }
           this.$inertia.post(this.$route('batches.update',this.editItem.id), formData)
             .then(()=>{
               this.snackbar = true;
@@ -258,10 +305,9 @@ export default {
       editedItem(item){
         this.editItem = {}
         this.editItem.id = item.id
-        this.date3 = item.ended_at
-        let date = item.started_at.split('-');
-        date = parseInt(date[2]) + 4;
-        this.selectDate = item.started_at.slice(0, -2)+date;
+        this.editItem.capacity = item.capacity
+        this.editItem.start_at = item.start_at
+        this.editlast_date = item.last_at
         this.editDialog = true
       },
       deleteItem(item){
@@ -279,20 +325,12 @@ export default {
         }
       },
       getColor(status){
-        const curentDate = new Date();
-        // curentDate.setDate(curentDate.getDate() - 2)
-        const date = new Date(status);
-        return date <= curentDate ? 'error' : 'success'
-      },
-      getText(status){
-        const curentDate = new Date();
-        // curentDate.setDate(curentDate.getDate() + 1)
-        const date = new Date(status);
-        if(date < curentDate){
-          return 'Timesup';
+        if(status < 5 || status == 0){
+          return 'success';
+        }else if(status < 10){
+          return 'warning'
         }else{
-          let left =  Math.abs(Math.floor((Date.UTC(curentDate.getFullYear(), curentDate.getMonth(), curentDate.getDate()) - Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) ) /(1000 * 60 * 60 * 24)));
-          return left > 1 ?  left+2+' days left' : left+' day left'
+          return 'error'
         }
       }
     },

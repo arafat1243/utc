@@ -13,12 +13,12 @@
             <v-carousel-item
             v-for="(slide, i) in slides"
             :key="i"
-            :src="slide.src"
+            :src="$page.baseUrl+slide.path"
             >
             <v-overlay absolute>
                 <div class="d-flex justify-center align-center flex-column">
-                    <div class="text-h4 text-md-h1 d-flex" v-html="slide.headline"></div>
-                    <p class="ftco-paragraph text-caption text-md-subtitle-1" v-html="slide.paragraph"></p>
+                    <div class="text-h4 text-md-h1 d-flex"   v-html="slide.header.length > 4 ? slide.header : ''"></div>
+                    <p class="ftco-paragraph text-caption text-md-subtitle-1" v-html="slide.paragraph.length > 4 ? slide.paragraph : ''"></p>
                     <div>
                         <v-btn text class="slide-btn mr-2">Our Services</v-btn>
                         <v-btn text class="slide-btn">Our Courses</v-btn>
@@ -88,7 +88,32 @@
                 <div class="ftco-for-headline double-line-bottom-theme-colored-2"></div>
             </div>
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">choose your desired course</div>
-            <CourseCarousael :batch="false"/>
+            <carousel :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="popularCourse.length > 2 ? true : false"  class="mt-4" :autoplayHoverPause="true">
+                <v-card color="'white" width="400" :class="$vuetify.breakpoint.smAndDown ? 'ma-3 pa-3': 'ma-3'" v-for="(course, i) in popularCourse" :key="i">
+                    <v-img height="280px" :src="course.course.banner_img"></v-img>
+                    <v-card-title class="font-weight-bold">{{course.course.title}}</v-card-title>
+                    <v-card-text class="text-truncate" v-html="course.course.details"></v-card-text>
+                    <div class="details-small">
+                        <div class="month">
+                            <h4>{{course.course.course_duration}}</h4>
+                            <samp>course duration</samp>
+                        </div>
+                        <div class="class-count">
+                            <h4>{{course.course.class_count}}</h4>
+                            <samp>Total class</samp>
+                        </div>
+                        <div class="class-duration">
+                            <h4>{{course.course.class_duration}}</h4>
+                            <samp>class duration</samp>
+                        </div>
+                    </div>
+                    <v-card-actions class="justify-center">
+                        <inertia-link :href="$route('public.details',course.course_id)" class="my-4 v-btn v-btn--contained theme--light v-size--default primary">
+                            <span class="v-btn__content">Details</span>
+                        </inertia-link>
+                    </v-card-actions>
+                </v-card>
+            </carousel>
         </div>
         <div class="w-100 white-dark pa-10">
             <v-container>
@@ -111,7 +136,20 @@
                 <div class="ftco-for-headline double-line-bottom-theme-colored-2"></div>
             </div>
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">check out upcoming new batches</div>
-            <CourseCarousael :batch="true"/>
+            <carousel :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="batches.length > 3 ? true : false"  class="mt-4" :autoplayHoverPause="true">
+                <v-card color="'white" width="400" :class="$vuetify.breakpoint.smAndDown ? 'ma-3 pa-3': 'ma-3'" v-for="(batch, i) in batches" :key="i">
+                    <v-img height="280px" :src="batch.course.banner_img"></v-img>
+                    <v-card-title class="font-weight-bold">{{batch.course.title}}</v-card-title>
+                    <div class="text-subtitle-1 text-capitalize ml-4">starting date: {{batch.start_at}}</div>
+                    <div class="text-subtitle-1 text-capitalize ml-4">last date of admission: {{batch.last_at}}</div>
+                    <v-card-text class="text-truncate" v-html="batch.course.details"></v-card-text>
+                    <v-card-actions class="justify-center">
+                        <inertia-link :href="$route('public.details',batch.course.id)+'?batch_id='+batch.id" class="my-4 v-btn v-btn--contained theme--light v-size--default primary">
+                            <span class="v-btn__content">Details</span>
+                        </inertia-link>
+                    </v-card-actions>
+                </v-card>
+            </carousel>
         </div>
         <div class="w-100 white-dark py-10">
             <div class="text-h5 text-md-h3 ftco-headline justify-center white--text">What <div>people</div> say?</div>
@@ -119,20 +157,20 @@
                 <div class="ftco-for-headline double-line-bottom-theme-colored-2"></div>
             </div>
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">STUDENT AND client OPINION</div>
-            <carousel :items="1" :dots="false" :autoplay="true" :autoWidth="$vuetify.breakpoint.smAndDown ? false : true"  :nav="false" class="mt-4" :autoplayHoverPause="true">
-                <v-card class="ma-3" color="white-dark-2" max-width="605" dark v-for="(review,j) in reviews" :key="j">
+            <carousel :items="1" :center="reviews.length < 2 ? true : false" :dots="false" :autoplay="true" :autoWidth="$vuetify.breakpoint.smAndDown ? false : true"  :nav="false" class="mt-4" :autoplayHoverPause="true">
+                <v-card class="ma-3" color="white-dark-2" min-width="450" max-width="605" dark v-for="(review,j) in reviews" :key="j">
                     <v-card-title>
                         <v-list-item class="grow">
                             <v-list-item-avatar color="grey darken-3">
-                                <v-img class="elevation-6" :src="review.img"></v-img>
+                                <v-img class="elevation-6" :src="$page.baseUrl+review.avatar"></v-img>
                             </v-list-item-avatar>
                             <v-list-item-content>
-                                <v-list-item-title>{{review.name}}</v-list-item-title>
+                                <v-list-item-title class="text-left">{{review.name}}</v-list-item-title>
                             </v-list-item-content>
                         </v-list-item>
                     </v-card-title>
                     <v-card-text class="headline font-weight-bold">
-                        "{{review.context}}"
+                        "{{review.review}}"
                     </v-card-text>
                 </v-card>
             </carousel>
@@ -145,13 +183,13 @@
                             <v-card-title class="text-h5 text-md-h3 ftco-headline">SEE OUR<div>GALLERY</div></v-card-title>
                             <div class="double-line-bottom-theme-colored-2"></div>
                             <v-row no-gutters>
-                                <v-col cols="4" sm="3" v-for="(image,i) in images" :key="i">
+                                <v-col cols="4" sm="3" v-for="(image,i) in gallery" :key="i">
                                     <v-img @click="showLightbox(image.name)" style="cursor: pointer;" :src="image.name" aspect-ratio='1'></v-img>
                                 </v-col>
                             </v-row>
                             <lightbox id="mylightbox"
                                 ref="lightbox"
-                                :images="images"
+                                :images="gallery"
                                 :timeoutDuration="5000"
                             ></lightbox>
                         </v-card>
@@ -207,31 +245,15 @@ import Lightbox from 'vue-my-photos';
 import carousel from 'vue-owl-carousel';
 import Layout from '@/shared/public/Layout';
 import ClientCarousael from '@/shared/public/components/ClientCarousael';
-import CourseCarousael from '@/shared/public/components/CourseCarousael';
 export default {
     data: () => ({
         show: false,
         overlay: true,
-        images: [
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-            {name: 'storage/images/courses/web.jpg'},
-        ],
-        slides: [
-          {src: 'storage/images/gallery/banner.jpg', headline: 'Welcome to <div class="brand-text primary--text ml-3"> UTC</div>', paragraph: 'Learn, Be skilled, Know Your strength'},
-          {src: 'storage/images/gallery/slider-2.jpg', headline: 'Welcome to <div class="brand-text primary--text ml-3"> UTC</div>', paragraph: 'sentences developing a central idea, called the topic. Paragraphs add one idea at a time to your broader argument.'},
-          {src: 'storage/images/gallery/slider-3.png', headline: 'Welcome to <div class="brand-text primary--text ml-3"> UTC</div>', paragraph: 'sentences developing a central idea, called the topic. Paragraphs add one idea at a time to your broader argument.'}
-        ],
-        events: [
-            {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
-            {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
-            {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
-        ],
+        // events: [
+        //     {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
+        //     {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
+        //     {date: [28,'feb'], title: 'Admission Fair Spring 2017', time: '5.00 pm - 7.30 pm',location: '25 Newyork City.', path: '#'},
+        // ],
         inrtoItems: [
             {title:'OUR COURSES',text:'Lorem ipsum dolor sit amet, consectetur adpisici elit. Obcaec atdistinc tio quaerat iusto, accusa ntumeos nsect eturpers piciatis minima tempore!',color:'success',icon:'mdi-school'},
             {title:'OUR services',text:'Lorem ipsum dolor sit amet, consectetur adpisici elit. Obcaec atdistinc tio quaerat iusto, accusa ntumeos nsect eturpers piciatis minima tempore!',color:'primary',icon:'mdi-cog'},
@@ -243,15 +265,9 @@ export default {
             {number: 100,text: 'client'},
             {number: 150,text: 'Complete Projects'},
         ],
-        reviews: [
-            {img: '', name: 'Yeasir Arafat', context: 'Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well.'},
-            {img: '', name: 'Yeasir Arafat', context: 'Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well.'},
-            {img: '', name: 'Yeasir Arafat', context: 'Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well.'},
-            {img: '', name: 'Yeasir Arafat', context: 'Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well.'},
-            {img: '', name: 'Yeasir Arafat', context: 'Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well.'},
-        ]
       }),
-      components: {Lightbox,carousel,Layout,ClientCarousael,CourseCarousael},
+      props:['slides','popularCourse','batches','reviews','gallery'],
+      components: {Lightbox,carousel,Layout,ClientCarousael},
       methods:{
            showLightbox: function(imageName) {
                 this.$refs.lightbox.show(imageName);

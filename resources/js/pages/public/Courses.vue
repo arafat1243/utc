@@ -25,7 +25,9 @@
                             <v-card-title class="font-weight-bold">{{course.title}}</v-card-title>
                             <v-card-text class="text-truncate" v-html="course.details"></v-card-text>
                             <v-card-actions class="justify-center">
-                               <v-btn color="primary" @click="showDetails(course)">Details</v-btn>
+                               <inertia-link :href="$route('public.details',course.id)" class="my-4 v-btn v-btn--contained theme--light v-size--default primary">
+                            <span class="v-btn__content">Details</span>
+                        </inertia-link>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -52,72 +54,6 @@
                 </div>
             </carousel>
         </div>
-        <v-dialog v-model="detailsDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-card flat :elevation="0">
-                <v-toolbar dark color="primary">
-                <v-btn icon dark @click="detailsDialog = false">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-                <v-toolbar-title>Course Deatils</v-toolbar-title>
-                <v-spacer></v-spacer>
-                </v-toolbar>
-                <v-container>
-                    <v-row>
-                        <v-col cols="12" md="9">
-                            <v-img height="400" class="elevation-5" :src="$page.baseUrl+deatils.banner_img">
-                            </v-img>
-                            <v-card-title>{{deatils.title}}</v-card-title>
-                            <v-card-subtitle>{{deatils.category ? deatils.category.title : ''}}</v-card-subtitle>
-                            <v-card-text class="my-4" v-html="deatils.details"></v-card-text>
-                            <v-card>
-                                <v-alert class="transparent text-h5">Course Content</v-alert>
-                                <v-expansion-panels v-if="deatils.content"  multiple hover accordion focusable>
-                                <v-expansion-panel v-for="(item,i) in contentMaker(deatils.content)" :key="i">
-                                    <v-expansion-panel-header class="text-capitalize text-h6">{{item.header}}</v-expansion-panel-header>
-                                    <v-expansion-panel-content>
-                                        <v-list>
-                                            <v-list-item v-for="(item,i) in item.items" :key="i">
-                                                <v-list-item-title class="red--text text--accent-3 text-capitalize">{{i+1}}. {{item}}</v-list-item-title>
-                                            </v-list-item>
-                                        </v-list>
-                                    </v-expansion-panel-content>
-                                </v-expansion-panel>
-                            </v-expansion-panels>
-                            </v-card>
-                        </v-col>
-                        <v-col cols="12" md="3">
-                            <div :style="$vuetify.breakpoint.mdAndUp ? 'position: fixed;' : 'position: unset'">
-                                <v-card flat :elevation="18">
-                                <v-container>
-                                    <v-row justify="center" class="text-capitalize">
-                                        <v-col cols="12" :class="{'text-center' :$vuetify.breakpoint.mdAndUp}">
-                                            <v-btn color="primary" rounded>Apply</v-btn>
-                                        </v-col>
-                                        <v-col cols="$vuetify.breakpoint.mdAndUp ? '12' : '6'">
-                                            <v-chip color="info"><v-icon left>mdi-currency-bdt</v-icon>Course Fees: {{deatils.fees}} tk</v-chip>
-                                        </v-col>
-                                        <v-col cols="$vuetify.breakpoint.mdAndUp ? '12' : '6'">
-                                            <v-chip color="primary"><v-icon left>mdi-clock</v-icon>Course Duration: {{deatils.course_duration}}</v-chip>
-                                        </v-col>
-                                        <v-col cols="$vuetify.breakpoint.mdAndUp ? '12' : '6'">
-                                            <v-chip color="error"><v-icon left>mdi-clock</v-icon>class Duration: {{deatils.class_duration}}</v-chip>
-                                        </v-col>
-                                        <v-col cols="$vuetify.breakpoint.mdAndUp ? '12' : '6'">
-                                            <v-chip color="teal"><v-icon left>mdi-sigma</v-icon>Total Class: {{deatils.class_count}}</v-chip>
-                                        </v-col>
-                                        <v-col cols="$vuetify.breakpoint.mdAndUp ? '12' : '6'">
-                                            <v-chip color="success"><v-icon left>mdi-trophy</v-icon>Certificate of Completion</v-chip>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-card>
-                            </div>
-                            
-                        </v-col>
-                    </v-row>
-                </v-container>
-            </v-card>
-        </v-dialog>
     </Layout>
 </template>
 <script>
@@ -125,34 +61,7 @@ import Layout from '@/shared/public/Layout';
 import Pagination from '@/shared/admin/components/Pagination'
 import carousel from 'vue-owl-carousel';
 export default {
-    data: ()=>({
-        detailsDialog: false,
-        deatils: [],
-    }),
     props:['courses','allCourse'],
     components: {carousel,Layout},
-    methods:{
-        showDetails(course){
-            this.detailsDialog = true;
-            this.deatils = course;
-        },
-        contentMaker(content){
-          let contents = content.split('!hc!');
-          let finalContent = [];
-            contents.forEach(co => {
-                let conts = co.split('!h!');
-                let header = conts[0];
-                let cont = conts[1].split('!c!'),cots = [];
-                cont.forEach(cot =>{
-                    cots.push(cot);
-                });
-                finalContent.push({
-                    header:header,
-                    items: cots
-                });
-            })
-        return finalContent
-      }
-    },
 }
 </script>

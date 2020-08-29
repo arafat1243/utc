@@ -244,7 +244,7 @@ export default {
       success: '',
       errorMessage: ''
     }),
-    props:['categorys','course',''],
+    props:['categorys','course','batch_id'],
     watch: {
       terms(){
           this.dialogShow()
@@ -400,6 +400,7 @@ export default {
                     for(const data in this.form){
                         formData.append(data,this.form[data])
                     }
+                    formData.append('batch_id',this.batch_id);
                     this.$inertia.post(this.$route('public.apply.store'),formData)
                         .then(()=>{
                             if(this.$page.successMessage.success){
@@ -412,6 +413,7 @@ export default {
                                 this.errorMessage = '',
                                 this.courses = [],
                                 this.courseId = '';
+                                this.batch_id = '';
                                 this.$refs.personalInfo.reset(),
                                 this.$refs.accountInfo.reset(),
                                 this.$refs.courseInfo.reset();

@@ -19,11 +19,4 @@ class StudentHasCourse extends Model
     public function student(){
         return $this->hasOne(Student::class,'id','student_id');
     }
-
-    public function weekPayment(){
-        return $this->hasMany(Payment::class,'course_id','course_id')
-                    ->where('approve',false)
-                    ->where('created_at', '>', Carbon::now()->startOfWeek())
-                    ->where('created_at', '<', Carbon::now()->endOfWeek());
-    }
 }

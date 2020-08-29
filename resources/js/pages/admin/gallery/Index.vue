@@ -46,7 +46,7 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" v-if="editedIndex === -1">
-                                <v-file-input v-model="editedItem.photos" multiple show-size counter accept="image/*"  label="Choose Images"></v-file-input>   
+                                <v-file-input v-model="editedItem.photos" :rules="[v => !!v || 'Image is required.']" multiple show-size counter accept="image/*"  label="Choose Images"></v-file-input>   
                             </v-col>
                             <v-col cols="12" v-if="editedIndex !== -1">
                                 <v-text-field required v-model="editedItem.header" 

@@ -3,8 +3,8 @@
         <v-main>
             <Header/>
                 <slot/>
-            <Footer/>
         </v-main>
+        <Footer/>
     </v-app>
 </template>
 <script>

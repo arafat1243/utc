@@ -17,8 +17,9 @@ class CreateBatchesTable extends Migration
             $table->id();
             $table->integer('course_id');
             $table->integer('batch_no');
-            $table->date('started_at');
-            $table->date('ended_at');
+            $table->integer('capacity');
+            $table->date('last_at');
+            $table->date('start_at');
             $table->timestamps();
         });
     }

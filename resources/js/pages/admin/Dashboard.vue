@@ -74,30 +74,33 @@
             <v-menu v-if="role.can('student_update')" transition="slide-x-reverse-transition">
              
               <template v-slot:activator="{ on, attrs }">
-                <v-btn bottom color="primary" dark fab fixed right
+                  <v-btn bottom color="primary" dark fab fixed right
                     v-bind="attrs" v-on="on" @click="request_menu = true">
+                    <v-badge top left color="error" :content="paymentRequest.length" :value="paymentRequest.length">
                       <v-icon>mdi-currency-bdt</v-icon>
-                    </v-btn>
-                  </template>
+                    </v-badge>
+                  </v-btn>
+                
+              </template>
               
               <v-card width="350px" class="ml-auto">
-                        <v-card max-height="330px" flat class="primary lighten-3 overflow-y-auto">
-                            <!-- <div v-if="requestStudent.length == 0" class="text-h6 text-center">No Student available</div> -->
-                            <v-card-text>
-                                <div class="d-flex align-center"  v-for="i in 5" :key="i">
-                                    <v-avatar size="40px">
-                                        <v-img :src="$page.baseUrl+'storage/images/student/student-2.png'"></v-img>
+                        <v-card height="330px"  flat class="primary lighten-3 overflow-y-auto">
+                            <v-card-text v-if="paymentRequest.length > 0">
+                                <div  class="d-flex align-center"  v-for="(request,i) in paymentRequest" :key="i">
+                                    <v-avatar size="50px">
+                                        <v-img :src="$page.baseUrl+request.avatar"></v-img>
                                     </v-avatar>
                                     <div class="ml-3 font-weight-bold">
-                                        <a :href="$route('students.edit',1)" class="light-blue--text text--darken-3 text-h6">Yeasir Arafat</a>
+                                        <a :href="$route('students.edit',request.id)" class="light-blue--text text--darken-3 text-h6">{{request.name}}</a>
                                         <div>
-                                            Number : 01828715366<br/>
-                                            Course Name : Java <br/>Pay Amount : 2000tk
+                                            Number : {{request.number}}<br/>
+                                            Course Name : {{request.course[0]}} <br/>Pay Amount : {{request.amount}}tk
                                         </div>
                                         <v-divider class="my-3"></v-divider>
                                     </div>
                                 </div>
                             </v-card-text>
+                            <div v-else class="text-center center-vaticaly grey--text title font-weight-bold font-18">No payment request</div>
                         </v-card>
                         <v-card-text class="pt-2">
                         <div class="title font-weight-light mb-2">Payment Request</div>
@@ -185,7 +188,7 @@ export default {
       role: new Auth(vm.$page.auth.roles),
       timeOut: ''
     }),
-    props:['slides','payments','studentCourse','totals'],
+    props:['slides','payments','studentCourse','totals','paymentRequest'],
     mounted(){
       this.slideer();
     },
