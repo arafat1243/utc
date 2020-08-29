@@ -30,7 +30,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('isAdmin',function($user){
             $ret = '';
             foreach($user->roles as $role){
-                if($role->title === 'super_administrator'){
+                if($role->title == 'super_administrator'){
                     $ret = true;
                 }
             }
@@ -42,40 +42,31 @@ class AuthServiceProvider extends ServiceProvider
                 return false;
             }
             else{
-                $ret = '';
                 foreach($user->roles as $role){
-                    if($role->title === 'employee'){
-                        $ret = true;
+                    if($role->title == 'employee'){
+                      return Response::allow();
                     }
                 }
-                return $ret ? Response::allow()
-                    : Response::deny('You must be a Employee.');
+                return  Response::deny('You must be a Employee.');
             }
         });
-        Gate::define('isEmployeeOrAdmin',function($user){
+        Gate::define('isStudent',function($user){
             $ret = '';
-            foreach($user->roles as $role){
-                if($role->title === 'super_administrator'){
-                    $ret = true;
-                }
-            }
-            if($ret === true){
-                return Response::allow();
-            }else{           
-            if($user->status === 1){
-                return false;
-            }
-            else{
-                $ret = '';
                 foreach($user->roles as $role){
-                    if($role->title === 'employee'){
+                    if($role->title == 'student'){
                         $ret = true;
                     }
                 }
                 return $ret ? Response::allow()
-                    : Response::deny('You must be a Employee.');
+                    : Response::deny('You must be a Student.');
+        });
+        Gate::define('isEmployeeOrAdmin',function($user){
+            foreach($user->roles as $role){
+                if($role->title == 'super_administrator' || $role->title == 'employee'){
+                    return Response::allow();
+                }
             }
-            }
+           return Response::deny('You are not authorized.');
         });
         Gate::define('checkStatus',function($user){
             if($user->status === 1){

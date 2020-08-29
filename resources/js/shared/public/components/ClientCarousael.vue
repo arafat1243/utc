@@ -23,11 +23,7 @@ export default {
     components:{carousel},
     methods:{
         initialize(){
-            const instance = axios.create({
-            baseURL: this.$page.baseURL,
-            timeout: 1000,
-            });
-           instance.get(this.$route('public.clientForCarasul'))
+           axios.get(this.$route('public.clientForCarasul'))
             .then((res)=>{
                 this.clients = res.data.client;    
             })

@@ -49,6 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Employe::class,'id','user_id');
     }
 
+    public function student(){
+        return $this->belongsTo(Student::class,'id','user_id');
+    }
+
     public function getCreatedAtAttribute($date)
     {
         return Carbon::parse($date)->format('d-m-Y');

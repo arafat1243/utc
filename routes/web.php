@@ -20,8 +20,6 @@ use Inertia\Inertia;
 
     Route::get('/services/{slug?}','PublicController@services')->name('public.services');
 
-    Route::get('/clientForCarasul','PublicController@clientForCarasul')->name('public.clientForCarasul');
-
     Route::get('/portfolio/{slug?}','PublicController@clients')->name('public.portfolio');
 
     Route::get('/pages/{slug?}','PublicController@pages')->name('public.pages');
@@ -86,3 +84,26 @@ use Inertia\Inertia;
 
         });
     });
+
+    Route::prefix('student')->middleware(['auth','verified','can:isStudent'])->group(function(){
+        Route::get('/',function(){
+            return Inertia::render('student/Dashboard');
+        })->name('student');
+
+        Route::get('/profile','StudentProfileController@profile')->name('student.profile');
+        Route::post('/profile/{user}','StudentProfileController@update')->name('student.update');
+    });
+
+    Route::get('/redirect',function(){
+        foreach(Auth::user()->roles as $role){
+            if($role->title == 'student'){
+                return redirect()->intended('/student');
+            }else if($role->title == 'super_administrator' || $role->title == 'employee'){
+                if(Auth::user()->status){ 
+                     return redirect()->intended('/admin');
+                }else{
+                    return redirect()->intended(route('users.newUser'));
+                }
+            }
+        }
+    })->name('redirect')->middleware('auth');
