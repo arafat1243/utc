@@ -33,8 +33,10 @@ class LogSuccessfulLogin
                 if($role->title === 'student'){
                     $ret = true;
                 }
-        }
-        if(!$ret){
+            }
+        if($ret){
+            
+        }else{
             if($event->user->status){ 
                 return redirect()->route('admin');
             }else{

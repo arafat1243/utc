@@ -1,7 +1,9 @@
 <template>
     <Layout :title="title">
         <v-container>
-            <v-sheet elevation="5" rounded style="position: relative;">
+            <v-row>
+                <v-col cols="12" md="9">
+                    <v-sheet elevation="5" rounded style="position: relative;">
                 <v-img max-height="300px" :src="$page.baseUrl+course.banner_img"></v-img>
                 <v-overlay absolute opacity=".4" z-index="1">
                     <v-chip class="ma-2 ma-md-1" color="success">Course Duration : {{course.course_duration}}</v-chip>
@@ -10,7 +12,7 @@
                 </v-overlay>
             </v-sheet>
             <v-card tile>
-                <v-card-title>{{course.title}}</v-card-title>
+                <v-card-title class="font-weight-medium">{{course.title}}</v-card-title>
                 <v-card-text class="font-18 font-weight-bold" v-html="course.details"></v-card-text>
                 <v-expansion-panels v-if="course.content"  multiple hover accordion focusable>
                     <v-expansion-panel v-for="(item,i) in contentMaker(course.content)" :key="i">
@@ -25,8 +27,10 @@
                     </v-expansion-panel>
                 </v-expansion-panels>
             </v-card>
-            <div :class="$vuetify.breakpoint.smAndUp ? 'right-content' :'buttom-content'">
-                <v-sheet width="300" height="310" elevation="12">
+                </v-col>
+            </v-row>
+            <div :class="$vuetify.breakpoint.mdAndUp ? 'right-content' :'buttom-content'">
+                <v-sheet width="300" height="320" elevation="12">
                     <v-sheet style="position: relative;" height="80" class="white--text" color="primary" tile title>
                         <span class="center font-weight-bold text-h6">
                             <v-icon left large color="white">mdi-currency-bdt</v-icon>
@@ -39,9 +43,9 @@
                     <v-divider class="my-3"></v-divider>
                     <ul class="list-group grey--text text--darken-2 mt-3">
                         <li class="mb-2">INCLUDES</li>
-                        <li>Language: বাংলা</li>
-                        <li>Instructor Support</li>
-                        <li>Certificate of Completion</li>
+                        <li><v-icon left>mdi-translate</v-icon> বাংলা</li>
+                        <li><v-icon left>mdi-wrench</v-icon> Support</li>
+                        <li><v-icon left>mdi-trophy</v-icon>Certificate of Completion</li>
                     </ul>
                 </v-sheet>
             </div>
@@ -116,6 +120,7 @@ export default {
             li{
                 &:not(:nth-child(1)){
                     font-size: 14px;
+                    margin: 5px 0;
                 }
             }
         }

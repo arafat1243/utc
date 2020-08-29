@@ -38,7 +38,7 @@
                                     <v-card min-height="200" max-height="250">
                                         <v-img max-height="250" :src="$page.baseUrl+client.avatar"></v-img>
                                         <v-fade-transition>
-                                        <v-overlay v-if="hover" absolute color="#036358">
+                                        <v-overlay v-if="hover" z-index="2" absolute color="#036358">
                                             <v-btn color="primary" @click="moreInfo(client)">See more info</v-btn>
                                         </v-overlay>
                                         </v-fade-transition>

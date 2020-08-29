@@ -42,9 +42,9 @@ use Inertia\Inertia;
     })->name('users.newUser');
     Route::post('/users','EmployeController@store')->name('users.store');
     });
-    Route::prefix('admin')->middleware(['auth','verified'])->group(function(){
+    Route::prefix('admin')->middleware(['auth','verified','can:isEmployeeOrAdmin'])->group(function(){
             Route::get('/','DashboardController@index')->name('admin');
-            Route::middleware('can:checkStatus')->group(function(){ 
+            Route::middleware(['can:checkStatus','can:isEmployeeOrAdmin'])->group(function(){ 
             Route::get('/users','UserController@index')->name('users.index')->middleware('can:isAdmin');
             Route::post('/users/{users}','UserController@addRoles')->name('users.addRole')->middleware('can:isAdmin');
             Route::post('/users','UserController@addUser')->name('users.addUser')->middleware('can:isAdmin');

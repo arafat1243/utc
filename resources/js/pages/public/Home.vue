@@ -20,8 +20,14 @@
                     <div class="text-h4 text-md-h1 d-flex"   v-html="slide.header.length > 4 ? slide.header : ''"></div>
                     <p class="ftco-paragraph text-caption text-md-subtitle-1" v-html="slide.paragraph.length > 4 ? slide.paragraph : ''"></p>
                     <div>
-                        <v-btn text class="slide-btn mr-2">Our Services</v-btn>
-                        <v-btn text class="slide-btn">Our Courses</v-btn>
+                        <!-- <v-btn text class="slide-btn mr-2">Our Services</v-btn> -->
+                        <inertia-link :href="$route('public.services')" class="slide-btn mr-2 v-btn v-btn--flat v-btn--text theme--dark v-size--default">
+                            <span class="v-btn__content">Our Services</span>
+                        </inertia-link>
+                        <inertia-link :href="$route('public.courses')" class="slide-btn v-btn v-btn--flat v-btn--text theme--dark v-size--default">
+                            <span class="v-btn__content">Our Courses</span>
+                        </inertia-link>
+                        <!-- <v-btn text class="slide-btn">Our Courses</v-btn> -->
                     </div>
                 </div>
                 <!-- <div class="d-flex align-center font-weight-bold ftco-overlay-text" v-html="slide.headline"></div> -->    

@@ -52,6 +52,31 @@ class AuthServiceProvider extends ServiceProvider
                     : Response::deny('You must be a Employee.');
             }
         });
+        Gate::define('isEmployeeOrAdmin',function($user){
+            $ret = '';
+            foreach($user->roles as $role){
+                if($role->title === 'super_administrator'){
+                    $ret = true;
+                }
+            }
+            if($ret === true){
+                return Response::allow();
+            }else{           
+            if($user->status === 1){
+                return false;
+            }
+            else{
+                $ret = '';
+                foreach($user->roles as $role){
+                    if($role->title === 'employee'){
+                        $ret = true;
+                    }
+                }
+                return $ret ? Response::allow()
+                    : Response::deny('You must be a Employee.');
+            }
+            }
+        });
         Gate::define('checkStatus',function($user){
             if($user->status === 1){
                 return Response::allow();
