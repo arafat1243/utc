@@ -28,7 +28,7 @@
                                 </v-list-item-content>
                             </template>
                             <div v-for="(item, i) in item.items" :key="i">
-                                <inertia-link v-if="!item.items && item.can" :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light primary--text' : 'v-list-item v-list-item--link theme--light'" :href="item.path" role="menuitem"
+                                <inertia-link v-if="item.can" :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light primary--text' : 'v-list-item v-list-item--link theme--light'" :href="item.path" role="menuitem"
                                         >
                                         <div class="v-list-item__icon">
                                         </div>
@@ -36,19 +36,6 @@
                                             <div class="v-list-item__title nav-deawer-item-title">{{ item.title }}</div>
                                         </div>
                                 </inertia-link>
-                                <v-list-group v-if="item.items && item.can" no-action sub-group>
-                                    <template v-slot:activator>
-                                        <v-list-item-content>
-                                            <v-list-item-title>{{item.title}}</v-list-item-title>
-                                        </v-list-item-content>
-                                    </template>
-                                    <inertia-link v-for="(item, i) in item.items"  :key="i" :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light primary--text' : 'v-list-item v-list-item--link theme--light'" :href="item.path" role="menuitem"
-                                       v-if="item.can" >
-                                        <div class="v-list-item__content">
-                                            <div class="v-list-item__title nav-deawer-item-title">{{ item.title }}</div>
-                                        </div>
-                                    </inertia-link>
-                                </v-list-group>
                             </div>   
                         </v-list-group>
                     </div>
@@ -84,10 +71,7 @@
                                 <v-list-item-subtitle>{{$page.auth.email}}</v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-action>
-                                <v-btn
-                                icon
-                                @click="menu = false"
-                                >
+                                <v-btn icon @click="menu = false">
                                 <v-icon>mdi-close-circle</v-icon>
                                 </v-btn>
                             </v-list-item-action>
@@ -153,13 +137,14 @@ import Auth from '@/auth'
     methods:{
         init(){
             this.items = [
-                { title: 'Dashboard', icon: 'mdi-view-dashboard ', path: this.$route('student'),can: true },
+                { title: 'Dashboard', icon: 'mdi-view-dashboard', path: this.$route('student'),can: true },
+                { title: 'Upcomeing Batches', icon: 'mdi-clipboard-list', path: this.$route('student.batch'),can: true },
             ]
         },
         isRoute(name) {
             let url = this.$page.baseUrl+this.$inertia.page.url.slice(1);
-            if (name === url+'admin') {
-            return url+'/admin' === url;
+            if (name === url+'student') {
+            return url+'/student' === url;
             }
             return url === name; 
         },

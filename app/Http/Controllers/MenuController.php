@@ -41,7 +41,7 @@ class MenuController extends Controller
                     ['text'=> 'Gallery','path'=>'/pages/gallery'],
                     ['text'=> 'Testimonials','path'=>'/pages/testimonials'],
                     ['text'=> 'Write Testimonials','path'=>'/pages/write-testimonials'],
-                    ['text'=> 'Student','path'=>'/pages/student'],
+                    ['text'=> 'Student','path'=>'/student','terget'=>'_blank'],
                 ]
             ],
             ['text' => 'About', 'icon' => 'mdi-information','path' => '/about',

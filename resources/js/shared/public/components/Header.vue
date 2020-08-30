@@ -26,11 +26,16 @@
                         </inertia-link>
                      </template>
                      <v-list>
-                         <inertia-link v-for="(item, i) in item.items"
-                            :key="i" :href="item.path" :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light ' : 'v-list-item v-list-item--link theme--light'" role="menuitem"
-                         >
+                        <div v-for="(item, i) in item.items" :key="i">
+                           <a :href="item.path" v-if="item.terget" target="_blank" rel="noopener noreferrer"
+                           :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light ' : 'v-list-item v-list-item--link theme--light'" role="menuitem">
+                           <div  class="v-list-item__title primary--text">{{ item.text }}</div>
+                           </a>
+                           <inertia-link  :href="item.path" v-else :class="isRoute(item.path) ? 'v-list-item v-list-item--active v-list-item--link theme--light ' : 'v-list-item v-list-item--link theme--light'" role="menuitem"
+                           >
                             <div  class="v-list-item__title primary--text">{{ item.text }}</div>
                          </inertia-link>
+                        </div>    
                      </v-list>
                   </v-menu>
                </div>

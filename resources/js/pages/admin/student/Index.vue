@@ -165,7 +165,7 @@
                               </tr>
                               <tr style="border-top: 1px solid #6f7172">
                                 <td>Deu Amount</td>
-                                <td>{{ totalPay - item.course.fees }} tk</td>
+                                <td>{{ Math.abs(totalPay - item.course.fees) }} tk</td>
                               </tr>
                             </tbody>
                           </table>
@@ -290,14 +290,12 @@ export default {
                       if(this.$page.successMessage.success){
                           this.init();
                           this.editDialog = false
-                          this.$nextTick(() => {
                             this.editStudent = {
                               course_id: 0,
                               student_id: 0,
                               attachment: []
                             }
                             this.$refs.studentForm.reset();
-                          })
                       }
                   })
                   .catch(err => console.log(err));

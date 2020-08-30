@@ -13,7 +13,7 @@ class StudentHasCourse extends Model
     }
 
     public function payment(){
-        return $this->hasMany(Payment::class,'id','st_has_co_id');
+        return $this->hasMany(Payment::class,'st_has_co_id','id');
     }
 
     public function student(){

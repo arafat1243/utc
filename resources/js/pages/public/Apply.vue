@@ -356,11 +356,11 @@ export default {
                 }
         },
         save (date) {
-        this.$refs.menu.save(date)
-        let curentDate = new Date().toISOString().substr(0, 10), dob = this.form.dob;
-        curentDate = curentDate.replace(/-/g,'');
-        dob = dob.replace(/-/g,'');
-        Math.abs(curentDate - dob) < 140000 ? this.error.dob = 'you age must be 14+' : this.error.dob = ''
+            this.$refs.menu.save(date)
+            let curentDate = new Date().toISOString().substr(0, 10), dob = this.form.dob;
+            curentDate = curentDate.replace(/-/g,'');
+            dob = dob.replace(/-/g,'');
+            Math.abs(curentDate - dob) < 140000 ? this.error.dob = 'you age must be 14+' : this.error.dob = ''
       },
         dialogShow(){
             if(this.terms){

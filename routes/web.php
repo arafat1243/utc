@@ -86,12 +86,12 @@ use Inertia\Inertia;
     });
 
     Route::prefix('student')->middleware(['auth','verified','can:isStudent'])->group(function(){
-        Route::get('/',function(){
-            return Inertia::render('student/Dashboard');
-        })->name('student');
+        Route::get('/','StudentDashboardController@index')->name('student');
 
-        Route::get('/profile','StudentProfileController@profile')->name('student.profile');
-        Route::post('/profile/{user}','StudentProfileController@update')->name('student.update');
+        Route::get('/profile','StudentDashboardController@profile')->name('student.profile');
+        Route::post('/profile/{user}','StudentDashboardController@update')->name('student.update');
+
+        Route::get('/batches','StudentDashboardController@batch')->name('student.batch');
     });
 
     Route::get('/redirect',function(){

@@ -14,6 +14,7 @@
             <v-card tile>
                 <v-card-title class="font-weight-medium">{{course.title}}</v-card-title>
                 <v-card-text class="font-18 font-weight-bold" v-html="course.details"></v-card-text>
+                <v-card-title>Course Content</v-card-title>
                 <v-expansion-panels v-if="course.content"  multiple hover accordion focusable>
                     <v-expansion-panel v-for="(item,i) in contentMaker(course.content)" :key="i">
                         <v-expansion-panel-header class="grey--text text--darken-2 font-18 text-capitalize font-weight-bold">{{item.header}}</v-expansion-panel-header>

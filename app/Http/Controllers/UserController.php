@@ -145,10 +145,12 @@ class UserController extends Controller
         if($user->id === Auth::user()->id){
             $user->load('employe');
             try{
-                $validator = Employe::where('number',$request->number)->count();
-                if ($validator > 1) {
-                    return redirect()->route('users.profile')
-                                ->withErrors(['number'=>['This Number is already taken']]);
+                if($user->employe->number != $request->number){
+                    $validator = Employe::where('number',$request->number)->count();
+                    if ($validator > 0) {
+                        return redirect()->route('users.profile')
+                                    ->withErrors(['number'=>['This Number is already taken']]);
+                    }
                 }
                 if ($request->hasFile('avatar')) {
                     if(!$user->avatar === 'storage/images/users/default.png'){
