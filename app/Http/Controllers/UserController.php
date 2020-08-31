@@ -36,6 +36,24 @@ class UserController extends Controller
             foreach(Role::orderBy('id','desc')->where([['title', '<>', 'student'],['title', '<>', 'employee'],['title','<>','super_administrator']])->get(['id','title']) as $role){
                 array_push($roles,['value'=>$role->id,'text'=>$role->title]);
             }
+            // dd($users);
+            $users->data = $users->getCollection()->transform(function ($user) {
+            return [
+                'id'=> $user->id,
+                'name' =>$user->name,
+                'avatar' => storage_path('app/'.$user->avatar),
+                'email' => $user->email,
+                'status' => $user->status,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'roles' => $user->roles,
+                'employe' => [
+                    'id' => $user->employe->id,
+                    'user_id' => $user->employe->user_id,
+                    'cv' => storage_path('app/'.$user->employe->cv),
+                ]
+            ];
+        });
             return Inertia::render('admin/user/Index',compact('users','roles'));    
     }
     public function addRoles(Request $request, $id){
@@ -158,7 +176,7 @@ class UserController extends Controller
                         Storage::delete($file);
                     }   
                     $fileName = 'avatar-'.(user::count()+1).'.'.$request->avatar->extension();
-                    $user->avatar = 'storage/'.$request->avatar->storeAs('images/users', $fileName,'public');     
+                    $user->avatar = 'storage/'.$request->avatar->storeAs('images/users', $fileName,'private');     
                 }
                 if($request->number){
                     $user->employe->number = $request->number;

@@ -48,35 +48,9 @@ class StudentController extends Controller
      */
     public function create($id,$batch_id = null)
     {
-        $categorys = CourseCategory::with(['courses'])->get(['id','title'])->map(function($category){
-            return [
-                'text' => $category->title,
-                'value' => $category->id,
-                'courses' => $category->courses->map(function($course){
-                    return [
-                    'text'=>$course->title,
-                    'value'=> $course->id,
-                    'course_duration'=>$course->course_duration,
-                    'class_duration'=>$course->class_duration,
-                    'class_count'=>$course->class_count,
-                    'fees'=>$course->fees,
-                    'category'=> $course->category->id
-                ];
-                })
-            ];
-        });
-            $course = Course::with('category')->where('id',$id)->get()->map(function($course){
-                return [
-                    'text'=>$course->title,
-                    'value'=> $course->id,
-                    'course_duration'=>$course->course_duration,
-                    'class_duration'=>$course->class_duration,
-                    'class_count'=>$course->class_count,
-                    'fees'=>$course->fees,
-                    'category'=> $course->category->id
-                ];
-            });
-        return Inertia::render('public/Apply',compact('categorys','course','batch_id'));
+        $course = Course::where('id',$id)
+        ->first(['id','title','course_duration','class_duration','class_count','fees']);
+        return Inertia::render('public/Apply',compact('course','batch_id'));
     }
 
     /**

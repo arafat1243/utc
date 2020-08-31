@@ -55,19 +55,19 @@ class EmployeController extends Controller
                             ->withErrors($validator);
             }
             if($request->hasFile('avatar') && $request->hasFile('cover_Letter')){
-                $imagePath = $request->avatar->storeAs('images/users', 'avatar-'.Auth::user()->id.'.'.$request->avatar->extension(),'public');
-                $cvPath = $request->cover_Letter->storeAs('cv', 'cover_Letter-'.Auth::user()->id.'.'.$request->cover_Letter->extension(),'public');
+                $imagePath = $request->avatar->storeAs('images/users', 'avatar-'.Auth::user()->id.'.'.$request->avatar->extension(),'private');
+                $cvPath = $request->cover_Letter->storeAs('cv', 'cover_Letter-'.Auth::user()->id.'.'.$request->cover_Letter->extension(),'private');
                 if($imagePath && $cvPath){
                     $employeData = [
                         'user_id' => Auth::user()->id,
                         'number' => $request->number,
-                        'cv' => 'storage/'.$cvPath
+                        'cv' => $cvPath
                     ];
                     $employe = new Employe($employeData);
                     $user = User::find(Auth::user()->id);
                     $user->name = $request->name;
                     $user->password = Hash::make($request->password);
-                    $user->avatar = 'storage/'.$imagePath;
+                    $user->avatar = $imagePath;
                     $user->status = 1;
 
                     if($employe->save() && $user->save()){

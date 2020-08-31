@@ -84,12 +84,12 @@ export default {
     props:['student'],
     watch:{
         change(){
-            this.fees = Math.floor(this.student.courses[0].fees / 3)
+            this.fees = this.student.courses[0].fees >=3000 && this.student.courses[0].fees <= 7000 ?  Math.round(this.student.courses[0].fees / 2) : this.student.courses[0].fees >=8000 && this.student.courses[0].fees <= 15000 ?  Math.round(this.student.courses[0].fees / 4) : Math.round(this.student.courses[0].fees / 5),
             this.error = ''
         }
     },
     mounted(){
-        this.fees = Math.floor(this.student.courses[0].fees / 3)
+        this.fees = this.student.courses[0].fees >=3000 && this.student.courses[0].fees <= 7000 ?  Math.round(this.student.courses[0].fees / 2) : this.student.courses[0].fees >=8000 && this.student.courses[0].fees <= 15000 ?  Math.round(this.student.courses[0].fees / 4) : Math.round(this.student.courses[0].fees / 5);
     },
     methods:{
         number(){

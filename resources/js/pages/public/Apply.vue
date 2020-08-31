@@ -115,29 +115,21 @@
                             <v-window-item :value="3">
                                 <v-form ref="courseInfo">
                                     <v-card-text>
+                                        <v-text-field :value="course.title" readonly outlined label="Course Name"></v-text-field>
                                     <div class="d-flex">
-                                        <v-select outlined label="Course Category *"
-                                        :rules="[v=>!!v || 'You must be select a Category.']"
-                                         v-model="categoryId" required :items="categorys"></v-select>
-                                            <v-spacer></v-spacer>
-                                        <v-select outlined v-model="courseId"
-                                        :rules="[v=>!!v || 'You must be select a Course.']"
-                                         label="Course Name *" required :items="courses"></v-select>
+                                        <v-text-field :value="course.course_duration" readonly outlined label="Course Duration"></v-text-field>
+                                        <v-spacer></v-spacer>
+                                        <v-text-field :value="course.class_duration" readonly outlined label="Class Duration"></v-text-field>
                                     </div>
                                     <div class="d-flex">
-                                        <v-text-field v-model="courseInfo.course_duration" readonly outlined label="Course Duration"></v-text-field>
+                                        <v-text-field :value="course.class_count" readonly outlined label="Total Class"></v-text-field>
                                         <v-spacer></v-spacer>
-                                        <v-text-field v-model="courseInfo.class_duration" readonly outlined label="Class Duration"></v-text-field>
+                                        <v-text-field :value="course.fees" readonly outlined label="Course Fees"></v-text-field>
                                     </div>
                                     <div class="d-flex">
-                                        <v-text-field v-model="courseInfo.class_count" readonly outlined label="Total Class"></v-text-field>
+                                        <v-text-field :value="form.pay_amount" readonly outlined label="Pay Amount"></v-text-field>
                                         <v-spacer></v-spacer>
-                                        <v-text-field v-model="form.fees" readonly outlined label="Course Fees"></v-text-field>
-                                    </div>
-                                    <div class="d-flex">
-                                        <v-text-field v-model="form.pay_amount" readonly outlined label="Pay Amount"></v-text-field>
-                                        <v-spacer></v-spacer>
-                                        <v-text-field v-model="courseInfo.due_amount" readonly outlined label="Due Amount"></v-text-field>
+                                        <v-text-field :value="form.due_amount" readonly outlined label="Due Amount"></v-text-field>
                                     </div>
                                     <v-checkbox :rules="[v=> !!v || '']" v-model="terms" label="Terms and Conditions"></v-checkbox>
                                 </v-card-text>
@@ -207,7 +199,7 @@
 <script>
 import Layout from '@/shared/public/Layout'
 export default {
-    data: () => ({
+    data: vm => ({
       step: 1,
       dialog: false,
       terms: false,
@@ -223,8 +215,12 @@ export default {
           'ab+',
           'ab-',
       ],
-      form: {},
-      categoryId: '',
+      form: {
+          'courseId': vm.course.id,
+          'fees': vm.course.fees,
+          'pay_amount': vm.course.fees >=3000 && vm.course.fees <= 7000 ?  Math.round(vm.course.fees / 2) : vm.course.fees >=8000 && vm.course.fees <= 15000 ?  Math.round(vm.course.fees / 4) : Math.round(vm.course.fees / 5),
+          'due_amount': Math.round(vm.course.fees - (vm.course.fees >=3000 && vm.course.fees <= 7000 ?  Math.round(vm.course.fees / 2) : vm.course.fees >=8000 && vm.course.fees <= 15000 ?  Math.round(vm.course.fees / 4) : Math.round(vm.course.fees / 5)))
+      },
       courseInfo: {},
       confirm_password: '',
       passwordConfirm: '',
@@ -239,12 +235,10 @@ export default {
       menu: false,
       setImg: '',
       error: {},
-      courses: [],
-      courseId: '',
       success: '',
       errorMessage: ''
     }),
-    props:['categorys','course','batch_id'],
+    props:['course','batch_id'],
     watch: {
       terms(){
           this.dialogShow()
@@ -259,32 +253,6 @@ export default {
       menu (val) {
         val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
       },
-      categoryId(val){
-          this.courses = [];
-          this.courseInfo = [];
-          this.form.fees = ''
-          this.categorys.forEach(category => {
-            if(category.value === val && category.courses){
-                this.courses = category.courses;
-            }
-        });
-      },
-      courseId(val){
-          this.courseInfo = []
-          this.courses.forEach(course => {
-              if(course.value === val){
-                  this.courseInfo  = {
-                        'course_duration': course.course_duration,
-                        'class_duration': course.class_duration,
-                        'class_count': course.class_count,
-                        'due_amount': Math.floor(course.fees - (course.fees / 3))
-                  }
-                  this.form.pay_amount = Math.floor(course.fees / 3)
-                  this.form.fees = course.fees
-                  this.form.courseId = this.courseId
-              }
-          })
-      }
     },
     computed: {
       currentTitle () {
@@ -309,7 +277,7 @@ export default {
               }
           }
           else if(this.step === 3){
-              if(this.categoryId && this.terms && this.form.fees && this.form.courseId){
+              if(this.terms){
                   return false
               }
           }
@@ -319,19 +287,6 @@ export default {
     mounted(){
         this.setImg = this.$page.baseUrl+'storage/images/users/default.png';
         this.success = this.$page.baseUrl+'storage/images/others/check.svg';
-        if(this.course.length > 0){
-            this.courseInfo  = {
-                    'course_duration': this.course[0].course_duration,
-                    'class_duration': this.course[0].class_duration,
-                    'class_count': this.course[0].class_count,
-                    'due_amount': Math.floor(this.course[0].fees - (this.course[0].fees / 3))
-                  }
-                  this.form.pay_amount = Math.floor(this.course[0].fees / 3)
-                  this.form.fees = this.course[0].fees
-                  this.courseId = this.course[0].value
-                  this.categoryId = this.course[0].category
-                  this.form.courseId = this.courseId
-        }
     },
     methods: {
         onlyNumber(value){
@@ -397,22 +352,17 @@ export default {
                     if(this.$refs.personalInfo.validate() && this.error.dob == '' && this.error.sameNum == '' &&
                      this.$refs.accountInfo.validate() && this.passwordConfirm == '' && this.$refs.courseInfo.validate()){
                         let formData = new FormData();
-                    for(const data in this.form){
+                    for(let data in this.form){
                         formData.append(data,this.form[data])
                     }
-                    formData.append('batch_id',this.batch_id);
                     this.$inertia.post(this.$route('public.apply.store'),formData)
                         .then(()=>{
                             if(this.$page.successMessage.success){
                                 this.form = {},
-                                this.categoryId = '',
-                                this.courseInfo = {},
                                 this.confirm_password = '',
                                 this.passwordConfirm = [],
                                 this.error = {},
                                 this.errorMessage = '',
-                                this.courses = [],
-                                this.courseId = '';
                                 this.batch_id = '';
                                 this.$refs.personalInfo.reset(),
                                 this.$refs.accountInfo.reset(),
@@ -420,7 +370,6 @@ export default {
                                 this.step = 4
                             }
                             else if(this.$page.errors != null){
-                                console.log(this.$page.errors);
                                 if(this.$page.errors.email){
                                     this.errorMessage = this.$page.errors.email[0];
                                 }

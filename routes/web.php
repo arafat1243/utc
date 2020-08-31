@@ -1,7 +1,11 @@
 <?php
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 /*
@@ -91,6 +95,9 @@ use Inertia\Inertia;
         Route::get('/profile','StudentDashboardController@profile')->name('student.profile');
         Route::post('/profile/{user}','StudentDashboardController@update')->name('student.update');
 
+        Route::post('/payment','StudentDashboardController@payment')->name('student.payment');
+        Route::delete('/payment/{id}','StudentDashboardController@delete')->name('student.delete');
+
         Route::get('/batches','StudentDashboardController@batch')->name('student.batch');
     });
 
@@ -107,3 +114,17 @@ use Inertia\Inertia;
             }
         }
     })->name('redirect')->middleware('auth');
+
+    Route::get('/file',function(){
+        // $contents = Storage::setVisibility('cv/cover_Letter-10.pdf','public');
+         $path = storage_path('app/cv/cover_Letter-10.pdf');
+        try {
+            $file = File::get($path);
+            $type = File::mimeType($path);
+            $response = Response::make($file, 200);
+            $response->header("Content-Type", $type);
+            return $response;
+        } catch (FileNotFoundException $exception) {
+            abort(404);
+        }
+    });

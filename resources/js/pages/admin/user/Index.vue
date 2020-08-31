@@ -94,7 +94,7 @@
             </template>
             <template v-slot:item.avatar='{ item }'>
               <v-avatar size="50">
-                <v-img :src="$page.baseUrl+item.avatar"></v-img>
+                <img :src="item.avatar"/>
               </v-avatar>
             </template>
             <template v-slot:item.actions="{ item }">
