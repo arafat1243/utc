@@ -18,6 +18,10 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+    Route::get('/assets/{file}','AssetsController@getPublicFile')->name('public.assets');
+    Route::get('auth/assets/{file}','AssetsController@getPublicFile')->name('private.assets')->middleware('auth');
+
     Route::get('/', 'HomeController@index')->name('home');
 
     Route::get('/courses/{slug?}','PublicController@courses')->name('public.courses');
@@ -99,6 +103,9 @@ use Inertia\Inertia;
         Route::delete('/payment/{id}','StudentDashboardController@delete')->name('student.delete');
 
         Route::get('/batches','StudentDashboardController@batch')->name('student.batch');
+
+        Route::get('/details/{slug}','StudentDashboardController@details')->name('student.details');
+        Route::get('/apply/{slug}/{batch_id}','StudentDashboardController@apply')->name('student.apply');
     });
 
     Route::get('/redirect',function(){
@@ -114,17 +121,3 @@ use Inertia\Inertia;
             }
         }
     })->name('redirect')->middleware('auth');
-
-    Route::get('/file',function(){
-        // $contents = Storage::setVisibility('cv/cover_Letter-10.pdf','public');
-         $path = storage_path('app/cv/cover_Letter-10.pdf');
-        try {
-            $file = File::get($path);
-            $type = File::mimeType($path);
-            $response = Response::make($file, 200);
-            $response->header("Content-Type", $type);
-            return $response;
-        } catch (FileNotFoundException $exception) {
-            abort(404);
-        }
-    });

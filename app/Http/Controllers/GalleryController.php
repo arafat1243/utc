@@ -28,6 +28,15 @@ class GalleryController extends Controller
             return abort(403,$response->message());
         }
         $photos = Gallery::orderBy('id','desc')->paginate(10);
+        $photos->data = $photos->getCollection()->transform(function($photo){
+            return [
+                'id' => $photo->id,
+                'path' => route('private.assets',str_replace('/',':',$photo->path)),
+                'header' => $photo->header,
+                'paragraph' => $photo->paragraph,
+                'slide' => $photo->slide,
+            ];
+        });
         return Inertia::render('admin/gallery/Index',compact('photos'));
     }
 
@@ -55,7 +64,7 @@ class GalleryController extends Controller
                 $count = Gallery::count()+1;
                 foreach($request->photos as $photo){
                     $fileName = 'gallery'.$count.'.'.$photo->extension();
-                    $path = 'storage/'.$photo->storeAs('images/gallery', $fileName,'public');
+                    $path = $photo->storeAs('images/gallery', $fileName,'private');
                     $course = Gallery::create(['path' => $path]);
                     $count++;
                 }
@@ -116,12 +125,8 @@ class GalleryController extends Controller
         }
         
         try{
-            $photo = Gallery::find($id);
-            if(empty($photo)){
-                return abort(404,'Not Found');
-            }
-            $filename = str_replace('storage','public',$photo->path);
-            Storage::delete($filename);
+            $photo = Gallery::findOrFail($id);
+            Storage::disk('private')->delete($photo->path);
             if($photo->delete()){
                 return redirect()->route('gallery.index')->with('successMessage',['success' => true,'message' => 'Photo Deleteed successfully']);
             }

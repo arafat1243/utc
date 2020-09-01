@@ -4,7 +4,7 @@
             <v-row>
                 <v-col cols="12" md="9">
                     <v-sheet elevation="5" rounded style="position: relative;">
-                <v-img max-height="300px" :src="$page.baseUrl+course.banner_img"></v-img>
+                <v-img max-height="300px" :src="course.banner_img"></v-img>
                 <v-overlay absolute opacity=".4" z-index="1">
                     <v-chip class="ma-2 ma-md-1" color="success">Course Duration : {{course.course_duration}}</v-chip>
                     <v-chip class="ma-2 ma-md-1" color="warning">Class Duration : {{course.class_duration}}</v-chip>

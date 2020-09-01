@@ -82,7 +82,7 @@ export default {
     props: ['user'],
     methods:{
         init(){
-            this.setAvatar = this.$page.baseUrl+this.user.avatar;
+            this.setAvatar = this.user.avatar;
             this.name = this.user.name;
             this.roles = this.user.roles;
             this.email = this.user.email;

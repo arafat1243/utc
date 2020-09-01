@@ -41,16 +41,16 @@ class UserController extends Controller
             return [
                 'id'=> $user->id,
                 'name' =>$user->name,
-                'avatar' => storage_path('app/'.$user->avatar),
+                'avatar' => route('private.assets',str_replace('/',':',$user->avatar)),
                 'email' => $user->email,
                 'status' => $user->status,
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
                 'roles' => $user->roles,
                 'employe' => [
-                    'id' => $user->employe->id,
-                    'user_id' => $user->employe->user_id,
-                    'cv' => storage_path('app/'.$user->employe->cv),
+                    'id' => $user->employe->id ?? null,
+                    'user_id' => $user->employe->user_id ?? null,
+                    'cv' => route('private.assets',str_replace('/',':',$user->employe->cv)),
                 ]
             ];
         });
@@ -103,7 +103,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'avatar' => 'storage/images/users/default.png',
+            'avatar' => 'images/users/default.png',
             'password' => Hash::make($password),
         ];
         
@@ -138,10 +138,8 @@ class UserController extends Controller
                 return abort(404,'Not Found');
             }
             if($user->employe){
-                $file = str_replace('storage','public',$user->avatar);
-                Storage::delete($file);
-                $file = str_replace('storage','public',$user->employe->cv);
-                Storage::delete($file);
+                Storage::disk('private')->delete($user->avatar);
+                Storage::disk('private')->delete($user->employe->cv);
                 $user->employe()->delete();
             }
             DB::table('role_user')->where('user_id', $id)->delete();
@@ -171,12 +169,11 @@ class UserController extends Controller
                     }
                 }
                 if ($request->hasFile('avatar')) {
-                    if(!$user->avatar === 'storage/images/users/default.png'){
-                        $file = str_replace('storage','public',$user->avatar);
-                        Storage::delete($file);
+                    if(!$user->avatar === 'images/users/default.png'){
+                        Storage::disk('private')->delete($user->avatar);
                     }   
                     $fileName = 'avatar-'.(user::count()+1).'.'.$request->avatar->extension();
-                    $user->avatar = 'storage/'.$request->avatar->storeAs('images/users', $fileName,'private');     
+                    $user->avatar = $request->avatar->storeAs('images/users', $fileName,'private');     
                 }
                 if($request->number){
                     $user->employe->number = $request->number;

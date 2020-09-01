@@ -29,6 +29,17 @@ class ServiceController extends Controller
             return abort(403,$response->message());
         }
         $services = Service::orderBy('id','desc')->paginate(10);
+        $services->data = $services->getCollection()->transform(function($service){
+            return [
+                'id' => $service->id,
+                'title' => $service->title,
+                'slug' => $service->slug,
+                'banner_img' => route('private.assets',str_replace('/',':',$service->banner_img)),
+                'details' => $service->details,
+                'created_at' => $service->created_at,
+                'updated_at' => $service->updated_at,
+            ];
+        });
         return Inertia::render('admin/services/Index',compact('services'));
     }
 
@@ -61,13 +72,13 @@ class ServiceController extends Controller
         try{
             if ($request->file('banner_img')->isValid()) {
                 $fileName = 'services'.(Service::count()+1).'.'.$request->banner_img->extension();
-                $path = $request->banner_img->storeAs('images/services', $fileName,'public');
+                $path = $request->banner_img->storeAs('images/services', $fileName,'private');
                 if($path){
                     $data = [
                         'title' => $request->title,
                         'slug' => $request->title,
                         'details' => $request->details,
-                        'banner_img' => 'storage/'.$path,
+                        'banner_img' => $path,
                     ];
                     // dd($data);
                     $course = new Service($data);
@@ -114,10 +125,9 @@ class ServiceController extends Controller
         try{
         $path = '';
         if ($request->hasFile('banner_img')) {
-            $file = str_replace('storage','public',$service->banner_img);
-            Storage::delete($file);
+            Storage::disk('private')->delete($service->banner_img);
                 $fileName = 'services'.(Service::count()+1).'.'.$request->banner_img->extension();
-                $path = 'storage/'.$request->banner_img->storeAs('images/services', $fileName,'public');
+                $path = $request->banner_img->storeAs('images/services', $fileName,'private');
             
         }
         else{
@@ -152,8 +162,7 @@ class ServiceController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $file = str_replace('storage','public',$service->banner_img);
-            if(Storage::delete($file)){
+            if(Storage::disk('private')->delete($service->banner_img)){
                 if($service->delete()){
                     return  redirect()->route('services.index')->with('successMessage',['success' => true,'message' => 'Service Deleted successfully']);
                 }

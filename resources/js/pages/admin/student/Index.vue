@@ -10,12 +10,14 @@
               <v-spacer></v-spacer>
               <v-dialog scrollable v-model="requestDialog" max-width="600">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-badge bottom left :content="requestStudent.length" :value="requestStudent.length">
-                    <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Request List</v-btn>
-                  </v-badge>
+                  <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                    <v-badge color="error" bottom left :content="requestStudent.length" :value="requestStudent.length">
+                      Request List
+                    </v-badge>
+                  </v-btn>
                 </template>
                 <v-card>
-                <v-tabs v-model="tab" background-color="primary" dark >
+                <v-tabs v-model="tab" fixed-tabs background-color="primary" dark >
                   <v-tab> New Student </v-tab>
                   <v-tab> Course Request </v-tab>
                 </v-tabs>
@@ -23,11 +25,11 @@
                 <v-tabs-items v-model="tab">
                   <v-tab-item>
                     <v-card flat>
-                      <v-card-text style="max-height: 300px;">
+                      <v-card-text class="overflow-y-auto" style="max-height: 300px;">
                         <div v-if="requestStudent.length == 0" class="text-h6 text-center">No Student available</div>
                         <div class="d-flex border-bottom align-center" v-else v-for="(student,i) in requestStudent" :key="i">
                           <v-avatar size="50px">
-                            <v-img :src="$page.baseUrl+student.user.avatar"></v-img>
+                            <v-img :src="student.user.avatar"></v-img>
                           </v-avatar>
                           <div class="ml-3 font-weight-bold">
                             <a :href="$route('students.edit',student.id)" class="text-h6">{{student.user.name}}</a>
@@ -51,7 +53,7 @@
           </template>
           <template v-slot:item.user.avatar="{item}">
             <v-avatar size="80px">
-              <img :src="$page.baseUrl + item.user.avatar">
+              <img :src="item.user.avatar">
             </v-avatar>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -130,12 +132,13 @@
                     <li><span>Institute Name :</span> <span>{{singleStudent.institute_name ? singleStudent.institute_name : ''}}</span></li>
                     <li><span>Academic Status :</span> <span>{{singleStudent.academic_status ? singleStudent.academic_status : ''}}</span></li>
                     <li><span>Blood Group :</span> <span>{{singleStudent.blood_group == 0 ? 'N/A' : singleStudent.blood_group}}</span></li>
+                    <li><span>Registar At :</span> <span>{{singleStudent.registar_at ? singleStudent.registar_at : ''}}</span></li>
                   </ul>
                 </v-col>
                 <v-col cols="4">
                 <div class="ml-7">
                   <div class="norenepss" style="width: 200px">
-                    <v-img height="200px" width="200px" :src="singleStudent.user ? $page.baseUrl+singleStudent.user.avatar : ''"></v-img>
+                    <v-img height="200px" width="200px" :src="singleStudent.user ? singleStudent.user.avatar : ''"></v-img>
                   </div>
                   <ul class="mt-5 text-capitalize norenepss ftco-list" v-if="singleStudent.courses">
                     <div class="text-body text-center">Course List</div>
@@ -194,6 +197,7 @@ export default {
         {text: 'E-mail',value: 'user.email'},
         {text: 'Phone Number',value: 'number'},
         {text: 'Emergency Number',value: 'emergency_number'},
+        {text: 'Registar At',value: 'registar_at'},
         {text: 'Actions',value: 'actions', sortable: false},
       ],
       studentsOnly: [],

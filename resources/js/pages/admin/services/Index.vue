@@ -28,7 +28,7 @@
             </template>
             <template v-slot:item.banner_img="{item}">
                 <v-avatar size="80">
-                    <v-img :src="$page.baseUrl+item.banner_img"></v-img>
+                    <v-img :src="item.banner_img"></v-img>
                 </v-avatar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -74,7 +74,7 @@
                 <v-card-title>
                     <span class="headline">{{singleservice.title}}</span>
                 </v-card-title>
-                <v-img :src="$page.baseUrl+singleservice.banner_img" height="300"></v-img>
+                <v-img :src="singleservice.banner_img" height="300"></v-img>
                 <v-card-text v-html="singleservice.details">
                     
                 </v-card-text>

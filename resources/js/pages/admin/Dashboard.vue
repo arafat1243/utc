@@ -17,7 +17,7 @@
                       <v-sheet height="250px" class="v-sheet--offset mx-auto" style="top: -14px;" elevation="12" max-width="calc(100% - 32px)" >
                         <v-window v-model="onboarding" reverse v-if="slides.length > 0">
                           <v-window-item  v-for="(slide,n) in slides" :key="n" :value="n">
-                            <v-img height="250px" :src="$page.baseUrl+slide.path"></v-img>
+                            <v-img height="250px" :src="slide.path"></v-img>
                           </v-window-item>
                         </v-window>
                         <div v-else class="text-center center-vaticaly grey--text title font-weight-bold font-18">No Slide Active Now</div>
@@ -88,7 +88,7 @@
                             <v-card-text v-if="paymentRequest.length > 0">
                                 <div  class="d-flex align-center"  v-for="(request,i) in paymentRequest" :key="i">
                                     <v-avatar size="50px">
-                                        <v-img :src="$page.baseUrl+request.avatar"></v-img>
+                                        <v-img :src="request.avatar"></v-img>
                                     </v-avatar>
                                     <div class="ml-3 font-weight-bold">
                                         <a :href="$route('students.edit',request.id)" class="light-blue--text text--darken-3 text-h6">{{request.name}}</a>

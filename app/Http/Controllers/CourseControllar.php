@@ -28,6 +28,21 @@ class CourseControllar extends Controller
             return abort(403,$response->message());
         }
         $courses = Course::orderBy('id','desc')->with('category')->paginate(10);
+        $courses->data = $courses->getCollection()->transform(function($course){
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'fees' => $course->fees,
+                'details' => $course->details,
+                'content' => $course->content,
+                'banner_img' => route('private.assets',str_replace('/',':',$course->banner_img)),
+                'course_duration' => $course->course_duration,
+                'class_duration' => $course->class_duration,
+                'class_count' => $course->class_count,
+                'cat_id' => $course->cat_id,
+                'created_at' => $course->created_at,
+            ];
+        });
         return Inertia::render('admin/course/Index',['courses'=>$courses]);
     }
     /**
@@ -67,14 +82,14 @@ class CourseControllar extends Controller
         try{
             if ($request->file('banner_img')->isValid()) {
                 $fileName = 'courses'.(Course::count()+1).'.'.$request->banner_img->extension();
-                $path = $request->banner_img->storeAs('images/courses', $fileName,'public');
+                $path = $request->banner_img->storeAs('images/courses', $fileName,'private');
                 if($path){
                     $data = [
                         'title' => $request->title,
                         'fees' => $request->fees,
                         'details' => $request->details,
                         'content' => $request->content,
-                        'banner_img' => 'storage/'.$path,
+                        'banner_img' => $path,
                         'course_duration' => $request->course_duration,
                         'class_duration' => $request->class_duration,
                         'class_count' => $request->class_count,
@@ -105,6 +120,7 @@ class CourseControllar extends Controller
             return abort(403,$response->message());
         }
         $categories = array();
+        $course->banner_img = route('private.assets',str_replace('/',':',$course->banner_img));
         foreach(CourseCategory::orderby('id','desc')->get() as $category){
            array_push($categories,array('text'=>$category->title,'value'=>$category->id));
         }
@@ -127,11 +143,9 @@ class CourseControllar extends Controller
         try{
         $path = '';
         if ($request->hasFile('banner_img')) {
-            $file = str_replace('storage','public',$course->banner_img);
-            if(Storage::delete($file)){
-                $fileName = 'courses'.$course->id.'.'.$request->banner_img->extension();
-                $path = 'storage/'.$request->banner_img->storeAs('images/courses', $fileName,'public');
-            }
+            Storage::disk('private')->delete($course->banner_img);
+            $fileName = 'courses'.$course->id.'.'.$request->banner_img->extension();
+            $path = $request->banner_img->storeAs('images/courses', $fileName,'private');
         }
         else{
             $path = $course->banner_img;
@@ -170,8 +184,7 @@ class CourseControllar extends Controller
             return abort(403,$response->message());
         }
         try{
-            $file = str_replace('storage','public',$course->banner_img);
-            if(Storage::delete($file)){
+            if(Storage::disk('private')->delete($course->banner_img)){
                 if($course->delete()){
                     return  redirect()->route('courses.index')->with('successMessage',['success' => true,'message' => 'Course Deleted successfully']);
                 }

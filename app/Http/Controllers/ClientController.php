@@ -29,6 +29,18 @@ class ClientController extends Controller
             return abort(403,$response->message());
         }
         $clients = Client::orderBy('id','desc')->with('category')->paginate(10);
+        $clients->data = $clients->getCollection()->transform(function($client){
+            return [
+                'id' => $client->id,
+                'title' => $client->title,
+                'details' => $client->details,
+                'avatar' => route('private.assets',str_replace('/',':',$client->avatar)),
+                'cat_id' => $client->cat_id,
+                'created_at' => $client->created_at,
+                'updated_at' => $client->updated_at,
+                'category' => $client->category,
+            ];
+        });
         return Inertia::render('admin/client/Index',compact('clients'));
     }
 
@@ -65,12 +77,12 @@ class ClientController extends Controller
         try{
             if ($request->file('banner_img')->isValid()) {
                 $fileName = 'clients'.(Client::count()+1).'.'.$request->banner_img->extension();
-                $path = $request->banner_img->storeAs('images/clients', $fileName,'public');
+                $path = $request->banner_img->storeAs('images/clients', $fileName,'private');
                 if($path){
                     $data = [
                         'title' => $request->title,
                         'details' => $request->details,
-                        'avatar' => 'storage/'.$path,
+                        'avatar' => $path,
                         'cat_id' => $request->cat_id,
                     ];
                     $client = new Client($data);
@@ -99,6 +111,7 @@ class ClientController extends Controller
             return abort(403,$response->message());
         }
         $categories = [];
+        $client->avatar = route('private.assets',str_replace('/',':',$client->avatar));
         foreach(ClientCategory::orderBy('id','desc')->get(['id','title']) as $category){
            array_push($categories,array('text'=>$category->title,'value'=>$category->id));
         }
@@ -125,10 +138,9 @@ class ClientController extends Controller
             }
         $path = '';
         if ($request->hasFile('banner_img')) {
-            $file = str_replace('storage','public',$client->avatar);
-            Storage::delete($file);
+            Storage::disk('private')->delete($client->avatar);
                 $fileName = 'clients'.(client::count()+1).'.'.$request->banner_img->extension();
-                $path = 'storage/'.$request->banner_img->storeAs('images/clients', $fileName,'public');
+                $path = $request->banner_img->storeAs('images/clients', $fileName,'private');
             
         }
         else{
@@ -163,8 +175,7 @@ class ClientController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $file = str_replace('storage','public',$client->avatar);
-            if(Storage::delete($file)){
+            if(Storage::disk('private')->delete($client->avatar)){
                 if($client->delete()){
                     return  redirect()->route('clients.index')->with('successMessage',['success' => true,'message' => 'Client Deleted successfully']);
                 }

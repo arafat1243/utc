@@ -13,7 +13,7 @@
             </template>
             <template v-slot:item.avatar="{ item }">
                 <v-avatar size="80">
-                  <v-img :src="$page.baseUrl+item.avatar"></v-img>
+                  <v-img :src="item.avatar"></v-img>
                 </v-avatar>
             </template>
             <template v-slot:top>

@@ -36,7 +36,7 @@
                             <v-hover>
                                 <template v-slot:default="{ hover }">
                                     <v-card min-height="200" max-height="250">
-                                        <v-img max-height="250" :src="$page.baseUrl+client.avatar"></v-img>
+                                        <v-img max-height="250" :src="client.avatar"></v-img>
                                         <v-fade-transition>
                                         <v-overlay v-if="hover" z-index="2" absolute color="#036358">
                                             <v-btn color="primary" @click="moreInfo(client)">See more info</v-btn>
@@ -61,7 +61,7 @@
                     <v-btn icon fab small @click="dialog = false"><v-icon>mdi-close-circle</v-icon></v-btn>
                 </v-card-title>
                 <v-row no-gutters justify="center" class="pa-2">
-                    <v-col cols="12" md="4"><v-img max-height="150" max-width="150" :src="$page.baseUrl+viewMore.avatar"></v-img></v-col>
+                    <v-col cols="12" md="4"><v-img max-height="150" max-width="150" :src="viewMore.avatar"></v-img></v-col>
                     <v-col cols="12" md="8">
                         <v-card-title>
                                 <v-icon left>mdi-domain</v-icon>

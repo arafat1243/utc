@@ -23,7 +23,7 @@
                 <v-col cols="12" sm="7" md="8">
                     <v-card>
                         <v-card-title class="primary white--text text-uppercase">{{service.title}}</v-card-title>
-                        <v-img :src="$page.baseUrl+service.banner_img" max-height="400"></v-img>
+                        <v-img :src="service.banner_img" max-height="400"></v-img>
                         <v-card-text v-html="service.details"></v-card-text>
                     </v-card>
                 </v-col>

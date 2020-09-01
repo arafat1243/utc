@@ -2,7 +2,7 @@
     <Layout title="Courses - UTC">
         <div>
             <v-card class="mx-auto">
-                <v-img class="white--text align-end" height="200px" :src="courses[0] ? $page.baseUrl+courses[0].banner_img : ''">   
+                <v-img class="white--text align-end" height="200px" :src="courses[0] ? courses[0].banner_img : ''">   
                     <v-overlay absolute ><v-card-title>OUR COURSES</v-card-title></v-overlay> 
                 </v-img>
             </v-card>
@@ -21,9 +21,23 @@
                     </v-col>
                     <v-col v-else cols="12" sm="6" md="4" v-for="(course, i) in courses" :key="i">
                         <v-card color="'white'" class="'ma-3'">
-                            <v-img height="280px" :src="$page.baseUrl+course.banner_img"></v-img>
+                            <v-img height="280px" :src="course.banner_img"></v-img>
                             <v-card-title class="font-weight-bold">{{course.title}}</v-card-title>
                             <v-card-text class="text-truncate" v-html="course.details"></v-card-text>
+                            <div class="details-small">
+                            <div class="month">
+                                <h4>{{course.course_duration}}</h4>
+                                <samp>course duration</samp>
+                            </div>
+                            <div class="class-count">
+                                <h4>{{course.class_count}}</h4>
+                                <samp>Total class</samp>
+                            </div>
+                            <div class="class-duration">
+                                <h4>{{course.class_duration}}</h4>
+                                <samp>class duration</samp>
+                            </div>
+                        </div>
                             <v-card-actions class="justify-center">
                                <inertia-link :href="$route('public.details',course.id)" class="my-4 v-btn v-btn--contained theme--light v-size--default primary">
                             <span class="v-btn__content">Details</span>
@@ -43,7 +57,7 @@
             <carousel :items="1" :dots="false" :autoplay="true" :autoplayHoverPause="true" :autoWidth="true"  :center="true" :nav="false" :loop="true"  class="mt-4">
                 <div v-for="(course,i) in allCourse" :key="i">
                     <v-avatar size="150" class="mx-10">
-                        <v-img :src="$page.baseUrl+course.banner_img"></v-img>
+                        <v-img :src="course.banner_img"></v-img>
                     </v-avatar>
                     <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">

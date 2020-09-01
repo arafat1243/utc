@@ -25,6 +25,17 @@ class ReviewController extends Controller
             return abort(403,$response->message());
         }
         $reviews = Review::orderBy('id','desc')->paginate(10);
+        $reviews->data = $reviews->getCollection()->transform(function($review){
+            return [
+                'id' => $review->id,
+                'avatar' => route('private.assets',str_replace('/',':',$review->avatar)),
+                'name' => $review->name,
+                'email' => $review->email,
+                'number' => $review->number,
+                'review' => $review->review,
+                'approved' => $review->approved,
+            ];
+        });
         return Inertia::render('admin/review/Index',compact('reviews'));
     }
 
@@ -48,14 +59,14 @@ class ReviewController extends Controller
             }
             if ($request->file('avatar')->isValid()) {
                 $fileName = 'reviewer'.(Review::count()+1).'.'.$request->avatar->extension();
-                $path = $request->avatar->storeAs('images/review', $fileName,'public');
+                $path = $request->avatar->storeAs('images/review', $fileName,'private');
                 if($path){
                     $data = [
                         'name' => $request->name,
                         'email' => $request->email,
                         'number' => $request->number,
                         'review' => $request->review,
-                        'avatar' => 'storage/'.$path
+                        'avatar' => $path
                     ];
                     $review = new Review($data);
                     if($review->save()){
@@ -84,10 +95,7 @@ class ReviewController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $review = Review::find($id);
-            if(empty($review)){
-                return abort(404,'This not Found');
-            }
+            $review = Review::findOrFaild($id);
             $review->approved = $request->approved;
             if($review->save()){
                 return redirect()->route('review.index')->with('successMessage',['success' => true,'message' => 'Review Updated successfully']);
@@ -113,13 +121,8 @@ class ReviewController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $review = Review::where('id',$id)->first();
-            if(empty($review)){
-                return abort(404,'This not Found');
-            }
-            $filename = str_replace('storage','public',$review->avatar);
-             Storage::delete($filename);
-             
+            $review = Review::findOrFaild('id',$id);
+             Storage::disk('private')->delete($review->avatar); 
             if($review->delete()){
                 return redirect()->route('review.index')->with('successMessage',['success' => true,'message' => 'Review Deleteed successfully']);
             }

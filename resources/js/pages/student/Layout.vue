@@ -56,7 +56,7 @@
             <template v-slot:activator="{ on }">
                <v-btn icon large v-on="on">
                                 <v-avatar size="50px" item>
-                                    <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                                    <v-img :src="$page.auth.avatar"></v-img>
                                 </v-avatar>
                             </v-btn>
                         </template>
@@ -64,7 +64,7 @@
                         <v-list>
                             <v-list-item>
                             <v-list-item-avatar size="80px">
-                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                                <v-img :src="$page.auth.avatar"></v-img>
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>{{$page.auth.name}}</v-list-item-title>

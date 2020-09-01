@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Batch;
+use App\Course;
 use App\Payment;
 use App\Student;
 use App\User;
@@ -153,5 +154,18 @@ class StudentDashboardController extends Controller
             }
         }
         return Inertia::render('student/Batch',compact('batches'));
+    }
+
+    public function details(Request $request, $id){
+        $course  = Course::findOrFail($id);
+        $batch_id = '';
+        if($request->has('batch_id')){
+            $batch_id = $request->batch_id;
+        }
+        return Inertia::render('student/Details',compact('course','batch_id'));
+    }
+
+    public function apply($id,$batch_id = null){
+
     }
 }

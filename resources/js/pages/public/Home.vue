@@ -13,7 +13,7 @@
             <v-carousel-item
             v-for="(slide, i) in slides"
             :key="i"
-            :src="$page.baseUrl+slide.path"
+            :src="slide.path"
             >
             <v-overlay absolute>
                 <div class="d-flex justify-center align-center flex-column">
@@ -96,7 +96,7 @@
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">choose your desired course</div>
             <carousel :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="popularCourse.length > 2 ? true : false"  class="mt-4" :autoplayHoverPause="true">
                 <v-card color="'white" width="400" :class="$vuetify.breakpoint.smAndDown ? 'ma-3 pa-3': 'ma-3'" v-for="(course, i) in popularCourse" :key="i">
-                    <v-img height="280px" :src="$page.baseUrl+course.course.banner_img"></v-img>
+                    <v-img height="280px" :src="course.course.banner_img"></v-img>
                     <v-card-title class="font-weight-bold">{{course.course.title}}</v-card-title>
                     <v-card-text class="text-truncate" v-html="course.course.details"></v-card-text>
                     <div class="details-small">
@@ -144,7 +144,7 @@
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">check out upcoming new batches</div>
             <carousel :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="batches.length > 3 ? true : false"  class="mt-4" :autoplayHoverPause="true">
                 <v-card color="'white" width="400" :class="$vuetify.breakpoint.smAndDown ? 'ma-3 pa-3': 'ma-3'" v-for="(batch, i) in batches" :key="i">
-                    <v-img height="280px" :src="$page.baseUrl+batch.course.banner_img"></v-img>
+                    <v-img height="280px" :src="batch.course.banner_img"></v-img>
                     <v-card-title class="font-weight-bold">{{batch.course.title}}</v-card-title>
                     <div class="text-subtitle-1 text-capitalize ml-4">starting date: {{batch.start_at}}</div>
                     <div class="text-subtitle-1 text-capitalize ml-4">last date of admission: {{batch.last_at}}</div>
@@ -168,7 +168,7 @@
                     <v-card-title>
                         <v-list-item class="grow">
                             <v-list-item-avatar color="grey darken-3">
-                                <v-img class="elevation-6" :src="$page.baseUrl+review.avatar"></v-img>
+                                <v-img class="elevation-6" :src="review.avatar"></v-img>
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title class="text-left">{{review.name}}</v-list-item-title>

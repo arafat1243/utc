@@ -94,7 +94,7 @@
             </template>
             <template v-slot:item.avatar='{ item }'>
               <v-avatar size="50">
-                <img :src="item.avatar"/>
+                <v-img :src="item.avatar"></v-img>
               </v-avatar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -162,7 +162,7 @@
                     <v-col cols="10">
                       <v-row>
                         <v-col cols="4" class="norenepss">
-                            <v-img height="250" :src="$page.baseUrl+singleUser.avatar"></v-img>
+                            <v-img height="250" :src="singleUser.avatar"></v-img>
                         </v-col>
                         <v-col cols="8">
                           <v-card-title class="norenepss ma-3">Full Name : {{singleUser.name}}</v-card-title>
@@ -170,7 +170,7 @@
                           <v-card-title class="norenepss ma-3">Contact Number : {{singleUser.employe ? singleUser.employe.number : ''}}</v-card-title>
                         </v-col>
                       </v-row>
-                      <embed width="100%" height="500" :src="singleUser.employe ? $page.baseUrl+singleUser.employe.cv : ''" type="application/pdf">
+                      <embed width="100%" height="500" :src="singleUser.employe ? singleUser.employe.cv : ''" type="application/pdf">
                  </v-col>
             </v-row>
           </v-container>

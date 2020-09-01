@@ -32,7 +32,7 @@
             </template>
             <template v-slot:item.banner_img="{item}">
                 <v-avatar size="80">
-                    <v-img :src="$page.baseUrl+item.banner_img"></v-img>
+                    <v-img :src="item.banner_img"></v-img>
                 </v-avatar>
             </template>
             <template v-slot:item.fees="{ item }">
@@ -85,7 +85,7 @@
                 <v-toolbar-title>Course Preview</v-toolbar-title>
                 <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-img height="400" class="elevation-5" :src="$page.baseUrl+singleCourse.banner_img">
+                <v-img height="400" class="elevation-5" :src="singleCourse.banner_img">
                 </v-img>
                 <v-card-title>{{singleCourse.title}}</v-card-title>
                 <v-card-subtitle>{{singleCourse.category ? singleCourse.category.title : ''}}</v-card-subtitle>

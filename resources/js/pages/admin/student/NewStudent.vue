@@ -17,6 +17,7 @@
                     <li><span>Institute Name :</span> <span>{{student.institute_name ? student.institute_name : ''}}</span></li>
                     <li><span>Academic Status :</span> <span>{{student.academic_status ? student.academic_status : ''}}</span></li>
                     <li><span>Blood Group :</span> <span>{{student.blood_group == 0 ? 'N/A' : student.blood_group}}</span></li>
+                    <li><span>Registar At :</span> <span>{{student.created_at ? student.created_at : ''}}</span></li>
                   </ul>
                 </v-col>
                 <v-col cols="4">

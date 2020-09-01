@@ -28,7 +28,7 @@
             </template>
             <template v-slot:item.avatar="{item}">
                 <v-avatar size="80">
-                    <v-img :src="$page.baseUrl+item.avatar"></v-img>
+                    <v-img :src="item.avatar"></v-img>
                 </v-avatar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -78,7 +78,7 @@
                         <v-icon small>mdi-close</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-img :src="$page.baseUrl+singleclient.avatar" height="300"></v-img>
+                <v-img :src="singleclient.avatar" height="300"></v-img>
                 <v-card-text v-html="singleclient.details">
                     
                 </v-card-text>

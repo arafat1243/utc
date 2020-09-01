@@ -6,7 +6,7 @@
                     <v-card >
                         <v-card-title>
                             <v-avatar tile size="150">
-                            <v-img :src="$page.baseUrl+user.avatar"></v-img>
+                            <v-img :src="user.avatar"></v-img>
                         </v-avatar>
                         </v-card-title>
                         <v-card-text>

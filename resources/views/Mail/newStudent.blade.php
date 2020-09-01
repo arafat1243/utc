@@ -1,6 +1,6 @@
 @component('mail::message')
 <body>
-    <img width="100%" src="{{URL::to('/').'/'.$user['image']}}">
+    <img width="100%" src="{{$user['image']}}">
     <h1 class="title">Hi {{$user['name']}},</h1>
     <p>We see that you have applied for this <strong>{{$user['course']}}</strong> course here. Your course has been approved. Your course will start
     soon. Please visit our institute to get more information about your course.

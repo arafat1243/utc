@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Batch;
 use App\Course;
-use App\CourseCategory;
 use App\Mail\NewStudentMail;
 use App\Payment;
 use App\Role;
@@ -38,6 +37,34 @@ class StudentController extends Controller
             return abort(403,$response->message());
         }
         $students = Student::orderBy('id','desc')->with(['user','courses.course','courses.payment'])->paginate(10);
+        // dd($students);
+        $students->data = $students->getCollection()->transform(function($student){
+            return [
+                'id' => $student->id,
+                'user_id' => $student->user_id,
+                'mother_name' => $student->mother_name,
+                'father_name' => $student->father_name,
+                'nationality' => $student->nationality,
+                'marital_status' => $student->marital_status,
+                'gender' => $student->gender,
+                'number' => $student->number,
+                'emergency_number' => $student->emergency_number,
+                'present_address' => $student->present_address,
+                'permanent_address' => $student->permanent_address,
+                'profession' => $student->profession,
+                'blood_group' => $student->blood_group,
+                'institute_name' => $student->institute_name,
+                'academic_status' => $student->academic_status,
+                'registar_at' => $student->created_at,
+                'user' => [
+                    'id' => $student->user->id,
+                    'avatar' => route('private.assets',str_replace('/',':',$student->user->avatar)),
+                    'name' => $student->user->name,
+                    'email' => $student->user->email,
+                ],
+                'courses' => $student->courses
+            ];
+        });
         return Inertia::render('admin/student/Index',compact('students'));
     }
 
@@ -82,11 +109,11 @@ class StudentController extends Controller
             $path = '';$user = ''; $course = '';$studentRole = 0;
             if ($request->file('avatar')->isValid()) {
                 $fileName = 'student-'.(Student::count()+1).'.'.$request->avatar->extension();
-                $path = $request->avatar->storeAs('images/student', $fileName,'public');
+                $path = $request->avatar->storeAs('images/student', $fileName,'private');
                 if($path){
                     $user = new User([
                         'name' => $request->name,
-                        'avatar' => 'storage/'.$path,
+                        'avatar' => $path,
                         'email' => $request->email,
                         'password' => Hash::make($request->password),
                     ]);
@@ -207,7 +234,7 @@ class StudentController extends Controller
                     Mail::to($student->user->email)->send(new NewStudentMail([
                         'name'=>$student->user->name,
                         'course'=>$student->courses[0]->course->title,
-                        'image'=>$student->courses[0]->course->banner_img,
+                        'image'=>route('public.assets',str_replace('/',':',$student->courses[0]->course->banner_img)),
                         'email' => $student->user->email
                     ]));
                     return redirect()->route('students.index');
@@ -231,8 +258,7 @@ class StudentController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $file = str_replace('storage','public',$student->user->avatar);
-            if(Storage::delete($file)){
+            if(Storage::disk('private')->delete($student->user->avatar)){
                 User::where('id',$student->user_id)->delete();
                 StudentHasCourse::where('student_id',$student->id)->delete();
                 DB::table('role_user')->where('user_id', $student->user_id)->delete();
@@ -254,12 +280,12 @@ class StudentController extends Controller
         try{
             if ($request->file('attachment')->isValid()) {
                 $fileName = 'student-'.$request->student_id.'-'.$request->course_id.'.'.$request->attachment->extension();
-                $path = $request->attachment->storeAs('images/attachment', $fileName,'public');
+                $path = $request->attachment->storeAs('student/attachment', $fileName,'private');
                 if($path){
                     $course = StudentHasCourse::where('student_id',$request->student_id)
                             ->where('course_id',$request->course_id);
                     $course->status = 'complete';
-                    $course->attachment = 'storage/'.$path;
+                    $course->attachment = $path;
                     if($course->save()){
                         return redirect()->route('students.index')->with('successMessage',['success' => true,'message' => 'Attachment added successfull']);
                     }
@@ -270,7 +296,7 @@ class StudentController extends Controller
             }
         }catch(Throwable $err){
             if($path){
-                Storage::delete('public/'.$path);
+                Storage::disk('private')->delete($path);
             }
             return redirect()->route('students.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
         }

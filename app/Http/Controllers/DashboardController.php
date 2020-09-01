@@ -23,7 +23,11 @@ class DashboardController extends Controller
 
     public function index(){
         
-        $slides = Gallery::where('slide',true)->get(['path']); 
+        $slides = Gallery::where('slide',true)
+            ->get(['path'])
+            ->transform(function($slid){
+                return $slid->path = route('private.assets',str_replace('/',':',$slid->path));
+            })->toArray(); 
         $totals = $this->total();
         $studentCourse = $this->students();
         $paymentRequest = $this->paymentRequest();
@@ -49,7 +53,7 @@ class DashboardController extends Controller
                             'id'=>$payment->id,
                             'amount' => $payment->amount,
                             'name'=> $payment->student->user->name,
-                            'avatar'=> $payment->student->user->avatar,
+                            'avatar'=> route('private.assets',str_replace('/',':',$payment->student->user->avatar)),
                             'number'=> $payment->student->number,
                             'course'=> $payment->student->courses->transform(function($course){
                                 return $course->course->title;
