@@ -50,7 +50,7 @@ class UserController extends Controller
                 'employe' => [
                     'id' => $user->employe->id ?? null,
                     'user_id' => $user->employe->user_id ?? null,
-                    'cv' => route('private.assets',str_replace('/',':',$user->employe->cv)),
+                    'cv' => $user->employe ? route('private.assets',str_replace('/',':',$user->employe->cv)) : '',
                 ]
             ];
         });
@@ -154,6 +154,8 @@ class UserController extends Controller
     public function profile(){
         $user = User::findOrFail(Auth::user()->id);
         $user->load(['roles','employe']);
+        $user->avatar = route('private.assets',str_replace('/',':',$user->avatar));
+        $user->employe->cv = route('private.assets',str_replace('/',':',$user->employe->cv));
         return Inertia::render('admin/user/Profile',compact('user'));
     }
 
@@ -161,11 +163,13 @@ class UserController extends Controller
         if($user->id === Auth::user()->id){
             $user->load('employe');
             try{
-                if($user->employe->number != $request->number){
-                    $validator = Employe::where('number',$request->number)->count();
-                    if ($validator > 0) {
-                        return redirect()->route('users.profile')
-                                    ->withErrors(['number'=>['This Number is already taken']]);
+                if($user->employe){
+                    if($user->employe->number != $request->number){
+                        $validator = Employe::where('number',$request->number)->count();
+                        if ($validator > 0) {
+                            return redirect()->route('users.profile')
+                                        ->withErrors(['number'=>['This Number is already taken']]);
+                        }
                     }
                 }
                 if ($request->hasFile('avatar')) {

@@ -44,7 +44,7 @@
                         <v-tooltip bottom v-if="ui.can">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-icon v-if="!ui.herf" small class="mr-2" :color="ui.color"
-                                v-bind="attrs" v-on="on" @click="ui.text === 'Preview' ? preview(item) : openDeleteDialog(item)">
+                                v-bind="attrs" v-on="on" @click="preview(item)">
                                 {{ui.icon}}
                             </v-icon>
                             <inertia-link v-if="ui.herf" style="font-size:16px" :href="$route('courses.edit',item.id)" v-bind="attrs" v-on="on" class="v-icon notranslate mr-2 v-icon--link mdi mdi-pencil theme--light success--text"></inertia-link>
@@ -65,17 +65,6 @@
                 </v-btn>
             </template>
         </v-snackbar>
-        <v-dialog v-model="dialog" persistent max-width="290">
-        <v-card color="warning white--text">
-            <v-card-title class="headline">Delete Course?</v-card-title>
-            <v-card-text class="white--text">Are you sure you want to delete this item?</v-card-text>
-            <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="white darken-1" text @click="()=>{this.dialog = false;this.deleteItem = {};}">No</v-btn>
-            <v-btn color="white darken-1" text @click="deleteFun">Yes</v-btn>
-            </v-card-actions>
-        </v-card>
-        </v-dialog>
         <v-dialog v-model="detailsDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="primary">
@@ -127,8 +116,8 @@ import Layout from '@/shared/admin/Layout'
 import Pagination from '@/shared/admin/components/Pagination'
 import Auth from '@/auth'
 export default {
-    data: () => ({
-      role: '',
+    data: vm => ({
+      role:  new Auth(vm.$page.auth.roles),
       search: '',
       snackbar: false,
       dialog: false,
@@ -158,35 +147,15 @@ export default {
     props:['courses'],
     mounted(){
         this.snackbar = this.$page.successMessage.success;
-        this.role = new Auth(this.$page.auth.roles);
         this.uiManage = [
             {text: 'Preview',icon: 'mdi-eye',color: 'primary',can: this.role.can('course_view')},
             {text: 'Edit',herf: 'mdi-eye', color: 'success',can: this.role.can('course_update')},
-            {text: 'Delete',icon: 'mdi-delete',color: 'error',can: this.role.can('course_delete')}
         ]
     },
     methods: {
       preview (item) {
         this.singleCourse = item;
         this.detailsDialog = true
-      },
-      openDeleteDialog (item) {
-        this.dialog = true;
-        this.deleteItem = item;
-      },
-      deleteFun(){
-          if(this.deleteItem && this.role.can('course_delete')){
-             this.$inertia.delete(this.$route('courses.destroy',this.deleteItem.id), {
-                replace: false,
-                preserveState: false,
-                preserveScroll: false,
-                only: [],
-                }).then(re=>{
-                    this.deleteItem = {};
-                    this.dialog = false;
-                    this.snackbar = true;                  
-                }).catch(err => {console.log(err)})
-          }
       },
       contentMaker(content){
           let contents = content.split('!hc!');

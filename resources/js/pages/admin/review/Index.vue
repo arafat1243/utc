@@ -140,8 +140,8 @@ import Layout from '@/shared/admin/Layout'
 import Pagination from '@/shared/admin/components/Pagination'
 import Auth from '@/auth'
 export default {
-     data: () => ({
-       role: '',
+     data: vm => ({
+      role: new Auth(vm.$page.auth.roles),
       dialog: false,
       snackbar: false,
       deleteDialog: false,
@@ -180,11 +180,9 @@ export default {
     },
     mounted(){
         this.initialize()
-        this.snackbar = this.$page.successMessage.success;
     },
     methods: {
       initialize () {
-        this.role = new Auth(this.$page.auth.roles);
         this.uiManager = [
             {text: 'Preview',icon: 'mdi-eye',color: 'primary',can: this.role.can('review_view')},
           {text: 'Edit', icon: 'mdi-pencil', color: 'primay', can: this.role.can('review_update')},
@@ -215,11 +213,13 @@ export default {
         if(this.editedItem.id){
            this.$inertia.delete(this.$route('review.destroy',this.editedItem.id))
            .then(()=>{
-                  this.deleteDialog = false;
                   this.snackbar = true;
-                  this.editedItem = this.defaultItem;
-                  this.initialize();               
-                }).catch(err => {console.log(err)})
+                  this.deleteDialog = false;
+                    if(this.$page.successMessage.success){
+                        this.editedItem = this.defaultItem;
+                        this.initialize();
+                    }          
+          }).catch(err => {console.log(err)})
         }
       },
       close () {

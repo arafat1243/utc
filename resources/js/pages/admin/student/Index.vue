@@ -10,7 +10,7 @@
               <v-spacer></v-spacer>
               <v-dialog scrollable v-model="requestDialog" max-width="600">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+                  <v-btn v-if="role.can('student_view')" color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
                     <v-badge color="error" bottom left :content="requestStudent.length + requestCourses.length + requestPyment.length" :value="requestStudent.length + requestCourses.length + requestPyment.length">
                       Request List
                     </v-badge>
@@ -224,7 +224,7 @@ import Layout from '@/shared/admin/Layout'
 import Pagination from '@/shared/admin/components/Pagination'
 import Auth from '@/auth'
 export default {
-    data: ()=>({
+    data: vm=>({
       headers: [
         {text: 'Name',value: 'user.name',align: 'left'},
         {text: 'Avatar',value: 'user.avatar',sortable: false},
@@ -253,6 +253,7 @@ export default {
       requestStudent: [],
       requestCourses: [],
       requestPyment: [],
+      role: new Auth(vm.$page.auth.roles),
     }),
     props: ['students'],
     mounted(){
@@ -305,10 +306,9 @@ export default {
             })
           }
         });
-        let role  = new Auth(this.$page.auth.roles);
         this.uiManage = [
-            {text: 'Details',icon: 'mdi-eye',color: 'primary',can: role.can('student_view')},
-            {text: 'Edit',icon: 'mdi-pencil', color: 'success',can: role.can('student_update')},
+            {text: 'Details',icon: 'mdi-eye',color: 'primary',can: this.role.can('student_view')},
+            {text: 'Edit',icon: 'mdi-pencil', color: 'success',can: this.role.can('student_update')},
         ]
       },
       preview(item){

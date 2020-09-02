@@ -18,6 +18,10 @@ use Throwable;
 
 class StudentDashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(){
         $courses = Student::with(['courses.course' => function($q){
                 $q->select('id','title');
@@ -32,6 +36,7 @@ class StudentDashboardController extends Controller
                 'fees' =>  $course->fees,
                 'title' => $course->course->title,
                 'status' => $course->status,
+                'attachment' => route('public.assets',str_replace('/',':',$course->attachment)),
                 'payment' => array(),
                 'can' => true
             ];
@@ -55,6 +60,7 @@ class StudentDashboardController extends Controller
 
     public function profile(){
         $user = User::findOrFail(Auth::user()->id);
+        $user->avatar = route('public.assets',str_replace('/',':',$user->avatar));
         $user->load('student');
         return Inertia::render('student/Profile',compact('user'));
     }

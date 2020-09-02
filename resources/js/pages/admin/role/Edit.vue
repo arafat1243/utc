@@ -22,16 +22,20 @@
                                     class="elevation-1"
                                     >
                                     <template v-slot:item.view="{ item }">
-                                        <v-checkbox color="primary" :value="item.view.value" v-model="item.view.select"></v-checkbox>
+                                        <v-checkbox color="primary" v-if="item.view.value" :value="item.view.value" v-model="item.view.select"></v-checkbox>
+                                        <span v-else class="text-center">-</span>
                                     </template>
                                     <template v-slot:item.create="{ item }">
-                                        <v-checkbox color="primary" :value="item.create.value" v-model="item.create.select"></v-checkbox>
+                                        <v-checkbox color="primary" v-if="item.create.value" :value="item.create.value" v-model="item.create.select"></v-checkbox>
+                                        <span v-else class="text-center">-</span>
                                     </template>
                                     <template v-slot:item.update="{ item }">
-                                        <v-checkbox color="primary" :value="item.update.value" v-model="item.update.select"></v-checkbox>
+                                        <v-checkbox color="primary" v-if="item.update.value" :value="item.update.value" v-model="item.update.select"></v-checkbox>
+                                        <span v-else class="text-center">-</span>
                                     </template>
                                     <template v-slot:item.delete="{ item }">
-                                        <v-checkbox color="primary" :value="item.delete.value" v-model="item.delete.select"></v-checkbox>
+                                        <v-checkbox color="primary" v-if="item.delete.value" :value="item.delete.value" v-model="item.delete.select"></v-checkbox>
+                                        <span v-else class="text-center">-</span>
                                     </template>
                                 </v-data-table>
                                 </v-col>
@@ -67,21 +71,21 @@ export default {
             view: {value: 'student_view', select: false},
             create: {select: false},
             update: {value: 'student_update', select: false},
-            delete: {value: 'student_update',select: false},
+            delete: {value: 'student_delete',select: false},
           },
           {
             page: 'Course',
             view: {value: 'course_view', select: false},
             create: {value: 'course_create', select: false},
             update: {value: 'course_update', select: false},
-            delete: {value: 'course_delete', select: false},
+            delete: {select: false},
           },
           {
             page: 'Course Category',
             view: {value: 'course_cate_view', select: false},
             create: {value: 'course_cate_create', select: false},
             update: {value: 'course_cate_update', select: false},
-            delete: {value: 'course_cate_delete', select: false},
+            delete: {select: false},
           },
           {
             page: 'Service',
@@ -109,7 +113,7 @@ export default {
             view: {value: 'batch_view', select: false},
             create: {value: 'batch_create', select: false},
             update: {value: 'batch_update', select: false},
-            delete: { select: false},
+            delete: {value: 'batch_delete', select: false},
           },
           {
             page: 'Gallery&Slide',

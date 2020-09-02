@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ClientCategory;
 use App\CourseCategory;
-use App\Gallery;
-use App\Review;
 use App\Service;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\URL;
 class MenuController extends Controller
 {
     static public function index(){

@@ -32,13 +32,15 @@
                                     <ol>
                                         <li v-for="(role,i) in roles" :key="i">
                                             <samp>{{title(role.title)}}</samp><br>
-                                            <span style="margin-left: 10px" v-for="(permission,i) in role.permissions" :key="i">{{i+1}}.{{permissions(permission)}}</span>
+                                            <ol>
+                                                <li v-for="(permission,i) in role.permissions" :key="i">{{permissions(permission)}}</li>
+                                            </ol>
                                         </li>
                                     </ol>
                                 </v-col>
                             </v-col>
                             <v-col cols="12" v-if="user.employe">
-                                <embed width="100%" height="500" :src=" $page.baseUrl+user.employe.cv" type="application/pdf">
+                                <embed width="100%" height="500" :src="user.employe.cv" type="application/pdf">
                             </v-col>
                         </v-row>
                     </v-card>
@@ -148,6 +150,9 @@ export default {
                       this.snackbar = true;
                       if(this.$page.successMessage.success){
                         //   this.$refs.form.reset()
+                        this.avatar = [];
+                        this.password = '';
+                        this.confirm_password = '';
                           this.init();
                       }
                       if(this.$page.errors.number){

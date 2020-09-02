@@ -20,7 +20,7 @@ class ReviewController extends Controller
     public function index()
     {
         $this->middleware('auth');
-        $response = Gate::inspect('canDoIt','course_cate_view:course_cate_create:course_cate_update:course_cate_delete');
+        $response = Gate::inspect('canDoIt','review_update:review_view:review_delete');
         if ($response->denied()) {
             return abort(403,$response->message());
         }
@@ -95,7 +95,7 @@ class ReviewController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $review = Review::findOrFaild($id);
+            $review = Review::findOrFail($id);
             $review->approved = $request->approved;
             if($review->save()){
                 return redirect()->route('review.index')->with('successMessage',['success' => true,'message' => 'Review Updated successfully']);
@@ -121,7 +121,7 @@ class ReviewController extends Controller
             return abort(403,$response->message());
         }
         try{
-            $review = Review::findOrFaild('id',$id);
+            $review = Review::findOrFail($id);
              Storage::disk('private')->delete($review->avatar); 
             if($review->delete()){
                 return redirect()->route('review.index')->with('successMessage',['success' => true,'message' => 'Review Deleteed successfully']);

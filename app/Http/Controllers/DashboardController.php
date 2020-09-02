@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $slides = Gallery::where('slide',true)
             ->get(['path'])
             ->transform(function($slid){
-                return $slid->path = route('private.assets',str_replace('/',':',$slid->path));
+                return ['path' => route('private.assets',str_replace('/',':',$slid->path))];
             })->toArray(); 
         $totals = $this->total();
         $studentCourse = $this->students();

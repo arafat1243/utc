@@ -24,7 +24,7 @@
                                 </v-timeline-item>
                                 </v-timeline>
                                 <v-card-actions>
-                                        <a href="#" target="_blank" v-if="item.status == 'compleate'" rel="noopener noreferrer">Download Certificate</a>
+                                        <a :href="item.attachment" target="_blank" v-if="item.status == 'complete' && item.attachment" rel="noopener noreferrer">Download Certificate</a>
                                         <v-spacer></v-spacer>
                                         <v-btn color="primary" v-if="item.can && item.status != 'panding'" @click="payment(item)">Payment</v-btn>
                                 </v-card-actions>

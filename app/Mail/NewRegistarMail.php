@@ -24,7 +24,7 @@ class NewRegistarMail extends Mailable
     public $password = '';
     public function __construct($user = ['name'=> '','email' => '','password'=> ''])
     {
-        $this->imageUrl = route('private.assets',str_replace('/',':','images/others/unnamed.png'));
+        $this->imageUrl = route('public.assets',str_replace('/',':','images/others/unnamed.png'));
         $this->name = $user['name'];
         $this->email = $user['email'];
         $this->password = $user['password'];

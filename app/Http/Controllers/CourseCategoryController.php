@@ -100,31 +100,4 @@ class CourseCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        
-        $response = Gate::inspect('canDoIt','course_cate_delete');
-        if ($response->denied()) {
-            return abort(403,$response->message());
-        }
-        try{
-            $category = CourseCategory::where('id',$id)->with('courses')->first();
-            if(empty($category)){
-                return abort(404,'This not Found');
-            }
-            foreach($category->courses as $course){
-                $filename = str_replace('storage','public',$course->banner_img);
-                Storage::delete($filename);
-            }
-            $category->courses()->delete();
-            if($category->delete()){
-                return redirect()->route('courseCategories.index')->with('successMessage',['success' => true,'message' => 'Category Deleteed successfully']);
-            }
-            else{
-                return redirect()->route('courseCategories.index')->with('successMessage',['success' => false,'message' => 'There is some error to Delete this category']);
-            }
-        }catch(Throwable $err){
-            return redirect()->route('courseCategories.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
-        }
-    }
 }

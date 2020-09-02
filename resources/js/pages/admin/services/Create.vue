@@ -102,7 +102,7 @@ export default {
                     _this.imagePath = this.result
                 })
                 reader.readAsDataURL(file); // convert to base64 string
-            }   
+            }  
         }
     },
     components:{

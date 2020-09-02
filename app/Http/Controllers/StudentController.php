@@ -32,7 +32,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $response = Gate::inspect('canDoIt','student_view:student_create:student_update:student_delete');
+        $response = Gate::inspect('canDoIt','student_view:student_update:student_delete');
         if ($response->denied()) {
             return abort(403,$response->message());
         }
@@ -186,7 +186,7 @@ class StudentController extends Controller
      * @param  \App\Student  $student
      * @return \Illuminate\Http\Response
      */
-    public function show(Student $student)
+    public function show($student)
     {
         return Inertia::render('public/Apply');
     }
@@ -333,7 +333,7 @@ class StudentController extends Controller
                 $path = $request->attachment->storeAs('student/attachment', $fileName,'private');
                 if($path){
                     $course = StudentHasCourse::where('student_id',$request->student_id)
-                            ->where('course_id',$request->course_id);
+                            ->where('course_id',$request->course_id)->first();
                     $course->status = 'complete';
                     $course->attachment = $path;
                     if($course->save()){
@@ -353,7 +353,10 @@ class StudentController extends Controller
     }
 
     public function payment(){
-
+        $response = Gate::inspect('canDoIt','student_update');
+        if ($response->denied()) {
+            return abort(403,$response->message());
+        }
         $payments = Payment::with(['course'=>function($query){
                 $query->select('id','title');
             }])

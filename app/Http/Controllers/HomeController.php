@@ -52,7 +52,7 @@ class HomeController extends Controller
             ->groupBy('course_id')
             ->get()
             ->map(function($batch){
-                if($batch->count >= 2){
+                if($batch->count >= 3){
                     return [
                         'course_id' =>$batch->course_id,
                         'course' => [
@@ -99,11 +99,11 @@ class HomeController extends Controller
         $datas = Gallery::orderBy('id','desc')->get(['path','header','paragraph','slide']);
 
         foreach($datas as $data){
+            array_push($retarnData['gallery'],['name'=>route('public.assets',str_replace('/',':',$data->path))]);
             if($data->slide){
                 $data->path = route('public.assets',str_replace('/',':',$data->path));
                 array_push($retarnData['slides'],$data);
             }
-            array_push($retarnData['gallery'],['name'=>route('public.assets',str_replace('/',':',$data->path))]);
         }
         return $retarnData;
     }

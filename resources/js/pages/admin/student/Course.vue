@@ -41,11 +41,11 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn outlined color="warning" @click="deleteDialog = true">
+                <v-btn v-if="role.can('student_delete')" outlined color="warning" @click="deleteDialog = true">
                     <v-icon left>mdi-close-circle</v-icon>
                     Delete
                 </v-btn>
-                <v-btn outlined :loading="loding" color="success" @click="submit">
+                <v-btn v-if="role.can('student_update')" outlined :loading="loding" color="success" @click="submit">
                     <v-icon left>mdi-check-circle</v-icon>
                     ok
                 </v-btn>
@@ -70,12 +70,13 @@
 import Layout from '@/shared/admin/Layout'
 import Auth from '@/auth'
 export default {
-    data: ()=>({
+    data: vm=>({
         fees: '',
         change: false,
         deleteDialog: false,
         loding: false,
-        error: ''
+        error: '',
+        role: new Auth(vm.$page.auth.roles),
     }),
     props:['student','pay_id'],
     watch:{

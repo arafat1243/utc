@@ -63,7 +63,7 @@
                   <div v-for="(ui,i) in uiManager" :key="i">
                   <v-tooltip bottom  v-if="ui.can">
                       <template v-slot:activator="{ on, attrs }">
-                          <v-icon small class="mr-2" :color="ui.color" @click="ui.text === 'Edit' ? editItem(item) : showDelete(item.id)" v-bind="attrs" v-on="on">
+                          <v-icon small class="mr-2" :color="ui.color" @click="editItem(item)" v-bind="attrs" v-on="on">
                               {{ui.icon}}
                           </v-icon>
                       </template>
@@ -85,21 +85,6 @@
                 </v-btn>
             </template>
         </v-snackbar>
-        <v-dialog v-model="deleteDialog" persistent max-width="290">
-        <v-card color="warning white--text">
-            <v-card-title class="headline">Delete Category?</v-card-title>
-            <v-card-text class="white--text">
-              Are you sure you want to delete this category?
-              if you delete this category all course will be delete
-              under this category.
-            </v-card-text>
-            <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="white darken-1" text @click="()=>{this.deleteDialog = false;this.editedItem = this.defaultItem;}">No</v-btn>
-            <v-btn color="white darken-1" text @click="deleteItem">Yes</v-btn>
-            </v-card-actions>
-        </v-card>
-        </v-dialog>
         <Pagination class="mt-4" :links="this.courseCategory"/>
     </Layout>
 </template>
@@ -108,8 +93,8 @@ import Layout from '@/shared/admin/Layout'
 import Pagination from '@/shared/admin/components/Pagination'
 import Auth from '@/auth'
 export default {
-     data: () => ({
-       role: '',
+     data: vm => ({
+       role: new Auth(vm.$page.auth.roles),
       dialog: false,
       snackbar: false,
       deleteDialog: false,
@@ -157,10 +142,8 @@ export default {
     },
     methods: {
       initialize () {
-        this.role = new Auth(this.$page.auth.roles);
         this.uiManager = [
           {text: 'Edit', icon: 'mdi-pencil', color: 'primay', can: this.role.can('course_cate_update')},
-          {text: 'Delete', icon: 'mdi-delete', color: 'error', can: this.role.can('course_cate_delete')},
         ];
         this.categoriesOnly = this.courseCategory.data;
       },
@@ -170,21 +153,6 @@ export default {
         this.editedItem.title = item.title
         this.editedItem.id = item.id
         this.dialog = true
-      },
-      showDelete(id){
-        this.editedItem.id = id;
-        this.deleteDialog = true;
-      },
-      deleteItem () {
-        if(this.editedItem.id){
-           this.$inertia.delete(this.$route('courseCategories.destroy',this.editedItem.id))
-           .then(()=>{
-                  this.deleteDialog = false;
-                  this.snackbar = true;
-                  this.editedItem = this.defaultItem;
-                  this.initialize();               
-                }).catch(err => {console.log(err)})
-        }
       },
       close () {
         this.dialog = false

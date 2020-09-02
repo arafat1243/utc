@@ -6,7 +6,7 @@
                 <v-col cols="8">
                   <ul class="text-body text-capitalize norenepss ftco-list">
                     <li><span>Name :</span><span>{{student.user ? student.user.name : ''}}</span></li>
-                    <li><span>E-mail :</span><span>{{student.user ? student.user.email : ''}}</span></li>
+                    <li><span>E-mail :</span><span style="text-transform: none !important;">{{student.user ? student.user.email : ''}}</span></li>
                     <li><span>Mother's Name :</span> <span>{{student.mother_name ? student.mother_name : ''}}</span></li>
                     <li><span>Father's Name :</span> <span>{{student.father_name ? student.father_name : ''}}</span></li>
                     <li><span>Contact Number :</span> <span>{{student.number ? student.number : ''}}</span></li>
@@ -47,11 +47,11 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn outlined color="warning" @click="deleteDialog = true">
+                <v-btn v-if="role.can('student_delete')" outlined color="warning" @click="deleteDialog = true">
                     <v-icon left>mdi-close-circle</v-icon>
                     Delete
                 </v-btn>
-                <v-btn outlined :loading="loding" color="success" @click="submit">
+                <v-btn  v-if="role.can('student_update')" outlined :loading="loding" color="success" @click="submit">
                     <v-icon left>mdi-check-circle</v-icon>
                     ok
                 </v-btn>
@@ -76,12 +76,13 @@
 import Layout from '@/shared/admin/Layout'
 import Auth from '@/auth'
 export default {
-    data: ()=>({
+    data: vm=>({
         fees: '',
         change: false,
         deleteDialog: false,
         loding: false,
-        error: ''
+        error: '',
+        role: new Auth(vm.$page.auth.roles),
     }),
     props:['student'],
     watch:{

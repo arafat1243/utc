@@ -71,21 +71,21 @@ export default {
             view: {value: 'student_view', select: false},
             create: {select: false},
             update: {value: 'student_update', select: false},
-            delete: {value: 'student_update',select: false},
+            delete: {value: 'student_delete',select: false},
           },
           {
             page: 'Course',
             view: {value: 'course_view', select: false},
             create: {value: 'course_create', select: false},
             update: {value: 'course_update', select: false},
-            delete: {value: 'course_delete', select: false},
+            delete: {select: false},
           },
           {
             page: 'Course Category',
             view: {value: 'course_cate_view', select: false},
             create: {value: 'course_cate_create', select: false},
             update: {value: 'course_cate_update', select: false},
-            delete: {value: 'course_cate_delete', select: false},
+            delete: {select: false},
           },
           {
             page: 'Service',
@@ -113,7 +113,7 @@ export default {
             view: {value: 'batch_view', select: false},
             create: {value: 'batch_create', select: false},
             update: {value: 'batch_update', select: false},
-            delete: { select: false},
+            delete: {value: 'batch_delete', select: false},
           },
           {
             page: 'Gallery&Slide',

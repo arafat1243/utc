@@ -58,10 +58,6 @@ class CourseControllar extends Controller
         if ($response->denied()) {
             return abort(403,$response->message());
         }
-        $response = Gate::inspect('isAdmin');
-        if ($response->denied()) {
-            return abort(403,$response->message());
-        }
         $categories = array();
         foreach(CourseCategory::orderby('id','desc')->get() as $category){
            array_push($categories,array('text'=>$category->title,'value'=>$category->id));
@@ -179,21 +175,4 @@ class CourseControllar extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Course $course)
-    {
-        $response = Gate::inspect('canDoIt','course_delete');
-        if ($response->denied()) {
-            return abort(403,$response->message());
-        }
-        try{
-            if(Storage::disk('private')->delete($course->banner_img)){
-                if($course->delete()){
-                    return  redirect()->route('courses.index')->with('successMessage',['success' => true,'message' => 'Course Deleted successfully']);
-                }
-            }
-            return  redirect()->route('courses.index')->with('successMessage',['success' => false,'message' => 'Unable to delete this Coursse']);
-        }catch(Throwable $err){
-            return  redirect()->route('courses.index')->with('successMessage',['success' => false,'message' => $err->getMessage()]);
-        }
-    }
 }

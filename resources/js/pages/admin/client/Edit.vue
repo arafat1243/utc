@@ -79,7 +79,7 @@ export default {
         this.form.title = this.client.title,
         this.form.cat_id = this.client.cat_id,
         this.form.details = this.client.details,
-        this.imagePath = this.$page.baseUrl + this.client.avatar,
+        this.imagePath = this.client.avatar,
         this.snackbar = this.$page.successMessage.success;
     },
     methods:{

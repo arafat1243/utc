@@ -195,8 +195,8 @@ import Auth from '@/auth'
                     ]
                 },
                 { title: 'Clients&Categories', icon: 'mdi-account-tie', can: this.role.can([
-                        'course_create','course_view','course_update','course_delete',
-                        'course_cate_delete','course_cate_view','course_cate_create','course_cate_update'
+                        'client_create','client_view','client_update','client_delete',
+                        'client_cate_create','client_cate_view','client_cate_create','client_cate_update'
                     ]),
                     items:[
                         {title: 'Categories', path: this.$route('clientCategories.index'),can:this.role.can([
@@ -210,7 +210,7 @@ import Auth from '@/auth'
                         },
                     ]
                 },
-                { title: 'Batch', icon: 'mdi-clipboard-list',path: this.$route('batches.index'), can: this.role.can(['batch_create','batch_view','batch_update','gallery_delete'])
+                { title: 'Batch', icon: 'mdi-clipboard-list',path: this.$route('batches.index'), can: this.role.can(['batch_create','batch_view','batch_update','batch_delete'])
                 },
                 { title: 'Gallery&Slide', icon: 'mdi-image-multiple ',path: this.$route('gallery.index'), can: this.role.can(['gallery_create','gallery_view','gallery_update','gallery_delete'])
                 },
