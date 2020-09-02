@@ -6,7 +6,9 @@
             <div class="d-flex justify-start wrap" v-if="$vuetify.breakpoint.lgAndUp && brandImg">
                <v-img :src="brandImg"   height="100" width="100"></v-img>
                <div class="mt-6">
-                  <div class="brand-text ml--3" style="font-size: 1.3em !important">Universal Technology Corporation</div>
+                  <inertia-link  class="brand-text ml--3" style="font-size: 1.3em !important" :href="$route('home')" role="menuitem">
+                     <span >Universal Technology Corporation</span>
+                  </inertia-link>
                   <div class="subtitle-1 primary--text ml--3 mt--2">Futuristic Technology...</div>
                </div>
             </div>

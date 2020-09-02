@@ -1,8 +1,5 @@
 <template>
     <Layout title="UTC">
-        <!-- <v-overlay :value="overlay">
-            <v-progress-circular indeterminate size="64"></v-progress-circular>
-        </v-overlay> -->
         <v-carousel
             cycle
             hide-delimiters
@@ -94,7 +91,7 @@
                 <div class="ftco-for-headline double-line-bottom-theme-colored-2"></div>
             </div>
             <div class="tex-subtitle-2 text-center text-uppercase grey--text">choose your desired course</div>
-            <carousel :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="popularCourse.length > 2 ? true : false"  class="mt-4" :autoplayHoverPause="true">
+            <carousel v-if="popularCourse.course" :dots="false" :autoplay="true" :center="true" :autoWidth="true" :nav="false" :loop="popularCourse.length > 2 ? true : false"  class="mt-4" :autoplayHoverPause="true">
                 <v-card color="'white" width="400" :class="$vuetify.breakpoint.smAndDown ? 'ma-3 pa-3': 'ma-3'" v-for="(course, i) in popularCourse" :key="i">
                     <v-img height="280px" :src="course.course.banner_img"></v-img>
                     <v-card-title class="font-weight-bold">{{course.course.title}}</v-card-title>

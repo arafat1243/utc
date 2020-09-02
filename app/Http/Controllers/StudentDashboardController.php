@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Batch;
 use App\Course;
 use App\Payment;
+use App\StidentHasBatch;
 use App\Student;
+use App\StudentHasCourse;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -141,23 +143,55 @@ class StudentDashboardController extends Controller
     }
 
     public function batch(){
+        $ids = Auth::user()->student->courses->transform(function($co){
+                return $co->course_id;
+            })->toArray();
         $batchs = Batch::withCount('students')
             ->with(['course'=>function($q){
                 $q->select('id','title','details','banner_img');
             }])
-            ->where('last_at','>', Carbon::now())
+            ->whereHas('course',function($q) use($ids){
+                $q->whereNotIn('id',$ids);
+            })
+            ->whereYear('last_at','>=', Carbon::now()->year)
+            ->whereMonth('last_at','>=', Carbon::now()->month)
+            ->whereDay('last_at','>=', Carbon::now()->day)
             ->get();
         $batches = [];
         foreach($batchs as $batch){
             if($batch->capacity > $batch->students_count){
+                $batch->course->banner_img = route('public.assets',str_replace('/',':',$batch->course->banner_img));
                 array_push($batches,$batch);
             }
         }
-        return Inertia::render('student/Batch',compact('batches'));
+        
+        // dd($ids);
+        $courses = Course::with(['category'=>function($q){
+                $q->select('id','title');
+            }])
+            ->orderBy('created_at','desc')
+            ->whereNotIn('id',$ids)
+            ->get()
+            ->transform(function($course){
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'details' => $course->details,
+                    'details' => $course->details,
+                    'class_count' => $course->class_count,
+                    'category' => $course->category->title,
+                    'class_duration' => $course->class_duration,
+                    'course_duration' => $course->course_duration,
+                    'banner_img' => route('private.assets',str_replace('/',':',$course->banner_img))
+                ];
+            })
+            ->toArray();
+        return Inertia::render('student/Batch',compact('batches','courses'));
     }
 
     public function details(Request $request, $id){
         $course  = Course::findOrFail($id);
+        $course->banner_img = route('private.assets',str_replace('/',':',$course->banner_img));
         $batch_id = '';
         if($request->has('batch_id')){
             $batch_id = $request->batch_id;
@@ -166,6 +200,42 @@ class StudentDashboardController extends Controller
     }
 
     public function apply($id,$batch_id = null){
+        $course = Course::select('id','title','fees')->findOrFail($id);
+        $student_id = Student::select('id')
+            ->where('user_id',Auth::user()->id)
+            ->first();
+        return Inertia::render('student/Apply',compact('course','student_id','batch_id'));
+    }
 
+    public function store(Request $request){
+        try{
+            $batch_id = false;
+            if($request->has('batch_id')){
+                $batch_id = Batch::withCount('students')
+                    ->findOrFail($request->batch_id);
+                if($batch_id->capacity < $batch_id->students_count){
+                    return true;
+                }
+            }
+            $course = new StudentHasCourse([
+                'student_id' => $request->student_id,
+                'course_id' => $request->course_id,
+                'fees' => $request->fees
+            ]);
+            if($batch_id){
+                $batch = new StidentHasBatch([
+                    'student_id' => $request->student_id,
+                    'batch_id' => $request->batch_id
+                ]);
+                $batch->save();
+            }
+            if($course->save()){
+                return redirect()->route('student')->with('successMessage',['success' => true,'message' => 'Your request successfully']);
+            }else{
+                return redirect()->route('student.apply',['course_id'=>$request->course_id,'batch_id'=>$request->batch_id])->with('successMessage',['success' => true,'message' => 'There is an error. please try later']);
+            }
+        }catch(Throwable $err){
+            return redirect()->route('student.apply',['course_id'=>$request->course_id,'batch_id'=>$request->batch_id])->with('successMessage',['success' => false,'message' => $err->getMessage()]);
+        }
     }
 }

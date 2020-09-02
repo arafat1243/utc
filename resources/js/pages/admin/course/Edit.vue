@@ -124,7 +124,7 @@ export default {
             this.form.class_duration = this.course.class_duration,
             this.form.class_count = this.course.class_count,
             this.form.cat_id = this.course.cat_id,
-            this.imagePath = this.$page.baseUrl+this.course.banner_img;
+            this.imagePath = this.course.banner_img;
         },
         onlyNumber ($event) {
             let keyCode = ($event.keyCode ? $event.keyCode : $event.which);

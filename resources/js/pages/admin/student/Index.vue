@@ -11,7 +11,7 @@
               <v-dialog scrollable v-model="requestDialog" max-width="600">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-                    <v-badge color="error" bottom left :content="requestStudent.length" :value="requestStudent.length">
+                    <v-badge color="error" bottom left :content="requestStudent.length + requestCourses.length + requestPyment.length" :value="requestStudent.length + requestCourses.length + requestPyment.length">
                       Request List
                     </v-badge>
                   </v-btn>
@@ -20,6 +20,7 @@
                 <v-tabs v-model="tab" fixed-tabs background-color="primary" dark >
                   <v-tab> New Student </v-tab>
                   <v-tab> Course Request </v-tab>
+                  <v-tab> Payment Request </v-tab>
                 </v-tabs>
 
                 <v-tabs-items v-model="tab">
@@ -29,11 +30,11 @@
                         <div v-if="requestStudent.length == 0" class="text-h6 text-center">No Student available</div>
                         <div class="d-flex border-bottom align-center" v-else v-for="(student,i) in requestStudent" :key="i">
                           <v-avatar size="50px">
-                            <v-img :src="student.user.avatar"></v-img>
+                            <v-img :src="student.avatar"></v-img>
                           </v-avatar>
                           <div class="ml-3 font-weight-bold">
-                            <a :href="$route('students.edit',student.id)" class="text-h6">{{student.user.name}}</a>
-                            <div>E-mail : {{student.user.email}}<br/>
+                            <a :href="$route('students.edit',student.id)+'?has_id='+student.courses.id" class="text-h6">{{student.name}} ({{student.courses.course.title}})</a>
+                            <div>E-mail : {{student.email}}<br/>
                             Number : {{student.number}}
                             </div>
                           </div>
@@ -43,7 +44,39 @@
                   </v-tab-item>
                   <v-tab-item>
                     <v-card flat>
-                      <v-card-text>hi</v-card-text>
+                      <v-card-text class="overflow-y-auto" style="max-height: 300px;">
+                        <div v-if="requestCourses.length == 0" class="text-h6 text-center">No Request available</div>
+                        <div class="d-flex border-bottom align-center" v-else v-for="(student,i) in requestCourses" :key="i">
+                          <v-avatar size="50px">
+                            <v-img :src="student.avatar"></v-img>
+                          </v-avatar>
+                          <div class="ml-3 font-weight-bold">
+                            <a :href="$route('students.edit',student.id)+'?has_id='+student.courses.id" class="text-h6">{{student.name}} ({{student.courses.course.title}})</a>
+                            <div>E-mail : {{student.email}}<br/>
+                            Number : {{student.number}}
+                            </div>
+                          </div>
+                        </div>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-card-text class="overflow-y-auto" style="max-height: 300px;">
+                        <div v-if="requestPyment.length == 0" class="text-h6 text-center">No Request available</div>
+                        <div class="d-flex border-bottom align-center" v-else v-for="(student,i) in requestPyment" :key="i">
+                          <v-avatar size="50px">
+                            <v-img :src="student.avatar"></v-img>
+                          </v-avatar>
+                          <div class="ml-3 font-weight-bold">
+                            <a :href="$route('students.edit',student.id)+'?has_id='+student.courses.id+'&pay_id='+student.pay.id" class="text-h6">{{student.name}} ({{student.courses.title}})</a>
+                            <div>E-mail : {{student.email}}<br/>
+                            Number : {{student.number}}<br/>
+                            Pay Amount: {{student.pay.pay}} tk
+                            </div>
+                          </div>
+                        </div>
+                      </v-card-text>
                     </v-card>
                   </v-tab-item>
                 </v-tabs-items>
@@ -121,6 +154,7 @@
                 <v-col cols="8">
                   <ul class="text-body text-capitalize norenepss ftco-list">
                     <li><span>Name :</span><span>{{singleStudent.user ? singleStudent.user.name : ''}}</span></li>
+                    <li><span>E-mail :</span><span style="text-transform: none !important;">{{singleStudent.user ? singleStudent.user.email : ''}}</span></li>
                     <li><span>Mother's Name :</span> <span>{{singleStudent.mother_name ? singleStudent.mother_name : ''}}</span></li>
                     <li><span>Father's Name :</span> <span>{{singleStudent.father_name ? singleStudent.father_name : ''}}</span></li>
                     <li><span>Contact Number :</span> <span>{{singleStudent.number ? singleStudent.number : ''}}</span></li>
@@ -154,21 +188,21 @@
                               <th>Amount</th>
                             </thead>
                             <tbody>
-                              <tr v-for="(payment,i) in item.payment" :key="i">
+                              <tr v-if="payment.approve" v-for="(payment,i) in item.payment" :key="i">
                                 <td>{{payment.created_at}}</td>
                                 <td>{{payment.amount}} tk</td>
                               </tr>
                               <tr style="border-top: 1px solid #6f7172">
                                 <td>Pay Amount</td>
-                                <td>{{totalPay}} tk</td>
+                                <td>{{totalAmount(item.payment)}} tk</td>
                               </tr>
                               <tr>
                                 <td>Course Fees</td>
-                                <td>(-){{item.course.fees}} tk</td>
+                                <td>(-){{item.fees}} tk</td>
                               </tr>
                               <tr style="border-top: 1px solid #6f7172">
                                 <td>Deu Amount</td>
-                                <td>{{ Math.abs(totalPay - item.course.fees) }} tk</td>
+                                <td>{{ Math.abs(totalAmount(item.payment) - item.fees) }} tk</td>
                               </tr>
                             </tbody>
                           </table>
@@ -210,14 +244,15 @@ export default {
       editDialog: false,
       singleStudent: [],
       loading: false,
-      totalPay: 0,
       editStudent: {
         course_id: 0,
         student_id: 0,
         attachment: []
       },
       ongoingCourse: [],
-      requestStudent: []
+      requestStudent: [],
+      requestCourses: [],
+      requestPyment: [],
     }),
     props: ['students'],
     mounted(){
@@ -229,8 +264,45 @@ export default {
         this.students.data.forEach(student =>{
           if(student.user.status){
             this.studentsOnly.push(student);
+            student.courses.forEach((course) => {
+              if(course.status == 'panding'){
+                this.requestCourses.push({
+                  'name': student.user.name,
+                  'id': student.id,
+                  'avatar': student.user.avatar,
+                  'email': student.user.email,
+                  'number': student.number,
+                  'courses': course
+                });
+              }else if(course.status == 'ongoing'){
+                  course.payment.forEach(pay => {
+                    if(!pay.approve){
+                      this.requestPyment.push({
+                        'name': student.user.name,
+                        'id': student.id,
+                        'avatar': student.user.avatar,
+                        'email': student.user.email,
+                        'number': student.number,
+                        'courses': {'id': course.id,'title':course.course.title},
+                        'pay': {'id':pay.id,'pay':pay.amount},
+                      });
+                    }
+                  })
+              }
+            })
           }else{
-            this.requestStudent.push(student);
+            student.courses.forEach((course) => {
+              if(course.status == 'panding'){
+                this.requestStudent.push({
+                  'name': student.user.name,
+                  'id': student.id,
+                  'avatar': student.user.avatar,
+                  'email': student.user.email,
+                  'number': student.number,
+                  'courses': course
+                });
+              }
+            })
           }
         });
         let role  = new Auth(this.$page.auth.roles);
@@ -241,12 +313,6 @@ export default {
       },
       preview(item){
         this.singleStudent = item
-        item['courses'].forEach(course =>{
-          this.totalPay = 0
-          course['payment'].forEach(pay => {
-            this.totalPay += pay.amount
-          })
-        })
         this.dialog = true
       },
       editItem(item){
@@ -315,6 +381,16 @@ export default {
           }
           this.$refs.studentForm.reset();
         })
+      },
+      totalAmount(item){
+        let total = 0;
+        item.forEach(pay => {
+          if(pay.approve){
+            total += pay.amount
+          }
+          
+        })
+        return total
       }
     },
     components:{
@@ -350,7 +426,7 @@ export default {
   }
   .chip{
     padding: 8px 0;
-    text-transform: capitalize;;
+    text-transform: capitalize;
     border-radius: 20px;
     border: none;
     text-align: center;

@@ -139,7 +139,7 @@
                             <v-window-item :value="4">
                                     <v-row justify="center">
                                         <v-col cols="12">
-                                            <v-img :src="success"></v-img>
+                                            <v-img :src="img"></v-img>
                                         </v-col>
                                         <v-col cols="12">
                                             <v-card-text class="text-center">
@@ -235,13 +235,12 @@ export default {
       menu: false,
       setImg: '',
       error: {},
-      success: '',
       errorMessage: ''
     }),
-    props:['course','batch_id'],
+    props:['course','batch_id','img','def'],
     watch: {
-      terms(){
-          this.dialogShow()
+      terms(val){
+          this.dialog = val;
       },
       same(val){
           if(val === true){
@@ -285,8 +284,7 @@ export default {
       }
     },
     mounted(){
-        this.setImg = this.$page.baseUrl+'storage/images/users/default.png';
-        this.success = this.$page.baseUrl+'storage/images/others/check.svg';
+        this.setImg = this.def;
     },
     methods: {
         onlyNumber(value){
@@ -317,11 +315,6 @@ export default {
             dob = dob.replace(/-/g,'');
             Math.abs(curentDate - dob) < 140000 ? this.error.dob = 'you age must be 14+' : this.error.dob = ''
       },
-        dialogShow(){
-            if(this.terms){
-                this.dialog = this.terms;
-            }
-        },
         setPreview(file){
             if (file) {
                 var reader = new FileReader();
@@ -355,6 +348,7 @@ export default {
                     for(let data in this.form){
                         formData.append(data,this.form[data])
                     }
+                    this.batch_id ? formData.append('batch_id',this.batch_id) : '';
                     this.$inertia.post(this.$route('public.apply.store'),formData)
                         .then(()=>{
                             if(this.$page.successMessage.success){

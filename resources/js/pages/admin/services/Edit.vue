@@ -69,7 +69,7 @@ export default {
     props:['service'],
     mounted(){
         this.form.title = this.service.title,
-        this.imagePath = this.$page.baseUrl+this.service.banner_img,
+        this.imagePath = this.service.banner_img,
         this.form.details = this.service.details;
         this.snackbar = this.$page.successMessage.success;
     },

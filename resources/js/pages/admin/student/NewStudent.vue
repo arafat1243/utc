@@ -6,6 +6,7 @@
                 <v-col cols="8">
                   <ul class="text-body text-capitalize norenepss ftco-list">
                     <li><span>Name :</span><span>{{student.user ? student.user.name : ''}}</span></li>
+                    <li><span>E-mail :</span><span>{{student.user ? student.user.email : ''}}</span></li>
                     <li><span>Mother's Name :</span> <span>{{student.mother_name ? student.mother_name : ''}}</span></li>
                     <li><span>Father's Name :</span> <span>{{student.father_name ? student.father_name : ''}}</span></li>
                     <li><span>Contact Number :</span> <span>{{student.number ? student.number : ''}}</span></li>
@@ -23,13 +24,13 @@
                 <v-col cols="4">
                 <div class="ml-7">
                   <div class="norenepss" style="width: 200px">
-                    <v-img height="200px" width="200px" :src="student.user ? $page.baseUrl+student.user.avatar : ''"></v-img>
+                    <v-img height="200px" width="200px" :src="student.user ? student.user.avatar : ''"></v-img>
                   </div>
                   <ul class="mt-5 text-capitalize norenepss ftco-list" >
                     <div class="text-body text-center">Course</div>
-                    <v-img max-height="150px" max-width="100%" :src="student.courses ? $page.baseUrl+student.courses[0].course.banner_img : ''"></v-img>
-                    <li style="border-bottom: none;"><span>Name :</span><span>{{student.courses ? student.courses[0].course.title : ''}}</span></li>
-                    <li style="border-bottom: none;"><span>Fees :</span><span>{{student.courses ? student.courses[0].fees+' tk' : ''}}</span></li>
+                    <v-img max-height="150px" max-width="100%" :src="student.courses ? student.courses.course.banner_img : ''"></v-img>
+                    <li style="border-bottom: none;"><span>Name :</span><span>{{student.courses ? student.courses.course.title : ''}}</span></li>
+                    <li style="border-bottom: none;"><span>Fees :</span><span>{{student.courses ? student.courses.fees+' tk' : ''}}</span></li>
                     <li style="border-bottom: none;">
                         <span>Need to Pay :</span>
                         <v-text-field @input="number" @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
@@ -85,18 +86,18 @@ export default {
     props:['student'],
     watch:{
         change(){
-            this.fees = this.student.courses[0].fees >=3000 && this.student.courses[0].fees <= 7000 ?  Math.round(this.student.courses[0].fees / 2) : this.student.courses[0].fees >=8000 && this.student.courses[0].fees <= 15000 ?  Math.round(this.student.courses[0].fees / 4) : Math.round(this.student.courses[0].fees / 5),
+            this.fees = this.student.courses.fees >=3000 && this.student.courses.fees <= 7000 ?  Math.round(this.student.courses.fees / 2) : this.student.courses.fees >=8000 && this.student.courses.fees <= 15000 ?  Math.round(this.student.courses.fees / 4) : Math.round(this.student.courses.fees / 5),
             this.error = ''
         }
     },
     mounted(){
-        this.fees = this.student.courses[0].fees >=3000 && this.student.courses[0].fees <= 7000 ?  Math.round(this.student.courses[0].fees / 2) : this.student.courses[0].fees >=8000 && this.student.courses[0].fees <= 15000 ?  Math.round(this.student.courses[0].fees / 4) : Math.round(this.student.courses[0].fees / 5);
+        this.fees = this.student.courses.fees >=3000 && this.student.courses.fees <= 7000 ?  Math.round(this.student.courses.fees / 2) : this.student.courses.fees >=8000 && this.student.courses.fees <= 15000 ?  Math.round(this.student.courses.fees / 4) : Math.round(this.student.courses.fees / 5);
     },
     methods:{
         number(){
             this.fees = this.fees.replace(/[^0-9]/g,'');
-            if(this.fees > this.student.courses[0].fees){
-                this.error = 'Pay amount should be less than '+this.student.courses[0].fees+' tk' ;
+            if(this.fees > this.student.courses.fees){
+                this.error = 'Pay amount should be less than '+this.student.courses.fees+' tk' ;
             }else if(this.fees == null || this.fees == 0){
                 this.error = 'Pay Amount is requried'
             }else{

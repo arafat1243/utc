@@ -108,11 +108,11 @@
                 <v-card-text class="my-4" v-html="singleCourse.details"></v-card-text>
                 <v-expansion-panels v-if="singleCourse.content"  multiple hover inset focusable>
                     <v-expansion-panel v-for="(item,i) in contentMaker(singleCourse.content)" :key="i">
-                        <v-expansion-panel-header class="light-blue accent-2 white--text text-capitalize text-h6">{{item.header}}</v-expansion-panel-header>
+                        <v-expansion-panel-header class="grey--text text--darken-2 font-18 text-capitalize font-weight-bold">{{item.header}}</v-expansion-panel-header>
                         <v-expansion-panel-content>
                             <v-list>
                                 <v-list-item v-for="(item,i) in item.items" :key="i">
-                                    <v-list-item-title class="red--text text-body-2 text-capitalize">{{i+1}}. {{item}}</v-list-item-title>
+                                    <v-list-item-title class="grey--text text--darken-3 text-body-1 text-capitalize">{{i+1}}. {{item}}</v-list-item-title>
                                 </v-list-item>
                             </v-list>
                         </v-expansion-panel-content>

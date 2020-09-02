@@ -23,7 +23,8 @@
                         <v-card color="'white'" class="'ma-3'">
                             <v-img height="280px" :src="course.banner_img"></v-img>
                             <v-card-title class="font-weight-bold">{{course.title}}</v-card-title>
-                            <v-card-text class="text-truncate" v-html="course.details"></v-card-text>
+                            <v-card-subtitle class="font-weight-bold">{{course.category}}</v-card-subtitle>
+                            <v-card-text  v-html="course.details.substr(0,70)"></v-card-text>
                             <div class="details-small">
                             <div class="month">
                                 <h4>{{course.course_duration}}</h4>

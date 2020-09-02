@@ -41,6 +41,8 @@ class CourseControllar extends Controller
                 'class_count' => $course->class_count,
                 'cat_id' => $course->cat_id,
                 'created_at' => $course->created_at,
+                'created_at' => $course->created_at,
+                'category' => $course->category,
             ];
         });
         return Inertia::render('admin/course/Index',['courses'=>$courses]);

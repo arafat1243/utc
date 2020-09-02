@@ -55,6 +55,7 @@ class PublicController extends Controller
                     'course_duration' => $course->course_duration,
                     'class_duration' => $course->class_duration,
                     'class_count' => $course->class_count,
+                    'category' => $course->category->title,
                 ];
             })
             ->toArray();
@@ -73,6 +74,7 @@ class PublicController extends Controller
                     'course_duration' => $course->course_duration,
                     'class_duration' => $course->class_duration,
                     'class_count' => $course->class_count,
+                    'category' => $course->category->title,
                 ];
             })
             ->toArray();

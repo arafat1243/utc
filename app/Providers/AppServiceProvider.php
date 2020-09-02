@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
                 return [
                     'id' => Auth::user()->id,
                     'name' => Auth::user()->name,
-                    'avatar' => Auth::user()->avatar,
+                    'avatar' => route('private.assets',str_replace('/',':',Auth::user()->avatar)),
                     'email' => Auth::user()->email,
                     'roles' => Auth::user()->roles,
                 ];

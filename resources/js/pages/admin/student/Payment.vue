@@ -1,162 +1,97 @@
 <template>
-    <Layout title="New Student" :nav="true">
-        <v-card>
-            <v-container>
-              <v-row no-gutters justify="center">
-                <v-col cols="8">
-                  <ul class="text-body text-capitalize norenepss ftco-list">
-                    <li><span>Name :</span><span>{{student.user ? student.user.name : ''}}</span></li>
-                    <li><span>Mother's Name :</span> <span>{{student.mother_name ? student.mother_name : ''}}</span></li>
-                    <li><span>Father's Name :</span> <span>{{student.father_name ? student.father_name : ''}}</span></li>
-                    <li><span>Contact Number :</span> <span>{{student.number ? student.number : ''}}</span></li>
-                    <li><span>Emergency Number :</span> <span>{{student.emergency_number ? student.emergency_number : ''}}</span></li>
-                    <li><span>Permanent Address :</span> <span style="max-width: 350px">{{student.permanent_address ? student.permanent_address : ''}}</span></li>
-                    <li><span>Present Address :</span> <span style="max-width: 350px">{{student.present_address ? student.present_address : ''}}</span></li>
-                    <li><span>Gender :</span> <span>{{student.gender ? student.gender : ''}}</span></li>
-                    <li><span>Marital status :</span> <span>{{student.marital_status ? student.marital_status : ''}}</span></li>
-                    <li><span>Institute Name :</span> <span>{{student.institute_name ? student.institute_name : ''}}</span></li>
-                    <li><span>Academic Status :</span> <span>{{student.academic_status ? student.academic_status : ''}}</span></li>
-                    <li><span>Blood Group :</span> <span>{{student.blood_group == 0 ? 'N/A' : student.blood_group}}</span></li>
-                  </ul>
-                </v-col>
-                <v-col cols="4">
-                <div class="ml-7">
-                  <div class="norenepss" style="width: 200px">
-                    <v-img height="200px" width="200px" :src="student.user ? $page.baseUrl+student.user.avatar : ''"></v-img>
-                  </div>
-                  <ul class="mt-5 text-capitalize norenepss ftco-list" >
-                    <div class="text-body text-center">Course</div>
-                    <v-img max-height="150px" max-width="100%" :src="student.courses ? $page.baseUrl+student.courses[0].course.banner_img : ''"></v-img>
-                    <li style="border-bottom: none;"><span>Name :</span><span>{{student.courses ? student.courses[0].course.title : ''}}</span></li>
-                    <li style="border-bottom: none;"><span>Fees :</span><span>{{student.courses ? student.courses[0].fees+' tk' : ''}}</span></li>
-                    <li style="border-bottom: none;">
-                        <span>Need to Pay :</span>
-                        <v-text-field @input="number" @keypress="($event)=>{let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
-                                        if (keyCode < 48 || keyCode > 57) { // 46 is dot
-                                            $event.preventDefault();
-                                        }}" :readonly="!change" v-model="fees" :error-messages="error"></v-text-field>
-                    </li>
-                    <v-checkbox v-model="change" label="Change Amount"></v-checkbox>
-                  </ul>
-                </div>
-                </v-col>
-              </v-row>
-            </v-container>
-            <v-divider></v-divider>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn outlined color="warning" @click="deleteDialog = true">
-                    <v-icon left>mdi-close-circle</v-icon>
-                    Delete
-                </v-btn>
-                <v-btn outlined :loading="loding" color="success" @click="submit">
-                    <v-icon left>mdi-check-circle</v-icon>
-                    ok
-                </v-btn>
-            </v-card-actions>
-          </v-card>
-          <v-dialog v-model="deleteDialog" persistent max-width="290">
-            <v-card color="warning white--text">
-                <v-card-title class="headline">Delete Student?</v-card-title>
-                <v-card-text class="white--text">
-                  Are you sure you want to delete this Student?
-                </v-card-text>
-                <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="white darken-1" text @click="deleteDialog = false">No</v-btn>
-                <v-btn color="white darken-1" text @click="deleteStudent">Yes</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+    <Layout title="Payment History">
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        hide-default-footer
+        multi-sort
+        class="elevation-1"
+      >
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            <v-toolbar-title>Payment History</v-toolbar-title>
+            <v-divider
+              class="mx-4"
+              inset
+              vertical
+            ></v-divider>
+              <v-menu v-model="menu1" :close-on-content-click="true"
+                transition="scale-transition" offset-y min-width="290px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field class="mt-10" v-model="form" label="From Date"
+                    readonly outlined v-bind="attrs" v-on="on" clearable @click:clear="()=>{items = payments.data;form = ''}"></v-text-field>
+                </template>
+                <v-date-picker v-model="form"></v-date-picker>
+              </v-menu>
+              <v-menu v-model="menu2" :close-on-content-click="true"
+                transition="scale-transition" offset-y min-width="290px">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field class="mt-10 ml-5" v-model="to" label="To Date"
+                    readonly outlined v-bind="attrs" v-on="on" clearable @click:clear="()=>{items = payments.data;to = ''}"></v-text-field>
+                </template>
+                <v-date-picker :min="form" v-model="to"></v-date-picker>
+              </v-menu>
+              <v-spacer></v-spacer>
+              <v-btn color="info" outlined @click="filterData">Filter</v-btn>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.status="{ item }">
+          <v-chip :color="item.status ? 'success' : 'error'">{{item.status ? 'Approved' : 'Unapproved'}}</v-chip>
+        </template>
+        <template v-slot:item.amount="{ item }">
+          <span>{{item.amount}} tk</span>
+        </template>
+        <template v-slot:body.append>
+          <tr>
+            <td colspan="4" class="title">Total</td>
+            <td colspan="2" class="title">{{total}} tk</td>
+          </tr>
+        </template>
+      </v-data-table>
+      <Pagination class="mt-4" :links="payments"/>
     </Layout>
 </template>
 <script>
 import Layout from '@/shared/admin/Layout'
-import Auth from '@/auth'
+import Pagination from '@/shared/admin/components/Pagination'
 export default {
-    data: ()=>({
-        fees: '',
-        change: false,
-        deleteDialog: false,
-        loding: false,
-        error: ''
-    }),
-    props:['student'],
-    watch:{
-        change(){
-            this.fees = Math.floor(this.student.courses[0].fees / 3)
-            this.error = ''
-        }
-    },
-    mounted(){
-        this.fees = Math.floor(this.student.courses[0].fees / 3)
-    },
-    methods:{
-        number(){
-            this.fees = this.fees.replace(/[^0-9]/g,'');
-            if(this.fees > this.student.courses[0].fees){
-                this.error = 'Pay amount should be less than '+this.student.courses[0].fees+' tk' ;
-            }else if(this.fees == null || this.fees == 0){
-                this.error = 'Pay Amount is requried'
-            }else{
-              this.error = ''
-            }
-        },
-        deleteStudent(){
-            this.$inertia.delete(this.$route('students.destroy',this.student.id))
-           .then(()=>{
-                  this.deleteDialog = false;           
-            }).catch(err => {console.log(err)})
-        },
-        submit(){
-          if(!this.error){
-            this.loding = true
-            const formData = new FormData();
-            formData.append('fees',this.fees);
-            this.$inertia.post(this.$route('students.update',this.student.id),formData)
-           .then(()=>{
-                  this.loding = false;           
-            }).catch(err => {console.log(err)})
-          }
-        }
-    },
-    components:{
-        Layout
+  data: vm=>({
+    menu1: false,
+    menu2: false,
+    form: '',
+    to: '',
+    items: vm.payments.data,
+    headers: [
+      { text: '#', align: 'start', sortable: false,value: 'serial'},
+      { text: 'Course Name',align: 'start',  value: 'course_name' },
+      { text: 'Payment At', value: 'payment_at' },
+      { text: 'Status', value: 'status' },
+      { text: 'Amount', value: 'amount' },
+    ],
+  }),
+  props:['payments'],
+  computed:{
+    total(){
+      let total = 0;
+      this.items.forEach( a =>{
+        total += a.amount
+      })
+      return total
     }
+  },
+  methods:{
+    filterData(){
+      const formDate = new Date(this.form),
+        toDate = new Date(this.to);
+      let items = this.items;
+      this.items = items.filter((a) => {
+        var date = new Date(a.payment_at.split('-').reverse().join('-'));
+          return (date >= formDate && date <= toDate);
+      });
+    },
+  },
+  components:{
+    Layout,Pagination
+  }
 }
 </script>
-<style lang="scss" scoped>
-  .norenepss{
-    background-color: #f1f3f6 !important; 
-    padding: 10px !important;
-    border: none;
-    border-radius: 10px !important;
-    box-shadow: 3px 3px 3px rgba(55, 84, 170, 0.1), -3px -3px 3px rgb(255, 255, 255);
-  }
-  .ftco-list{
-    li{
-      padding: 5px 10px;
-      border-bottom: 1px dotted #6f7172;
-      position: relative;
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: space-between;
-      span{
-        &:nth-child(1){
-          position: absolute;
-          left: 32px;
-          color: #6f7172;
-        }
-        color: #404242;
-      }
-    }
-  }
-  .chip{
-    padding: 8px 0;
-    text-transform: capitalize;;
-    border-radius: 20px;
-    border: none;
-    text-align: center;
-    color: #f1f3f6 !important;
-  }
-</style>

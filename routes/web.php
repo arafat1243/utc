@@ -89,7 +89,7 @@ use Inertia\Inertia;
             Route::resource('/batches','BatchController',['except' => ['show','create', 'edit','update']])->middleware('can:canDoIt,"batch_create:batch_view:batch_delete"');
             Route::post('/batches/{batch}','BatchController@update')->name('batches.update')->middleware('can:canDoIt,"batch_update"');
 
-
+            Route::get('/payment/','StudentController@payment')->name('payment.index')->middleware('can:canDoIt,"student_view"');
         });
     });
 
@@ -105,7 +105,8 @@ use Inertia\Inertia;
         Route::get('/batches','StudentDashboardController@batch')->name('student.batch');
 
         Route::get('/details/{slug}','StudentDashboardController@details')->name('student.details');
-        Route::get('/apply/{slug}/{batch_id}','StudentDashboardController@apply')->name('student.apply');
+        Route::get('/apply/{course_id}/{batch_id?}','StudentDashboardController@apply')->name('student.apply');
+        Route::post('/apply','StudentDashboardController@store')->name('student.store');
     });
 
     Route::get('/redirect',function(){

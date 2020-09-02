@@ -129,7 +129,7 @@
                                             $event.preventDefault();
                                         }}"
                              v-model="editItem.capacity" :rules="[v=>!!v || 'Number of Sit is required']" outlined required></v-text-field>   
-                            <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition"
+                            <v-menu v-model="menu3" :close-on-content-click="false" transition="scale-transition"
                               offset-y max-width="290px" min-width="290px"
                             >
                               <template v-slot:activator="{ on, attrs }">
@@ -143,9 +143,9 @@
                                   :rules="[v => !!v || 'Date is requried']"
                                 ></v-text-field>
                               </template>
-                              <v-date-picker :min="editItem.last_at ? new Date(editItem.last_at).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10)" v-model="editlast_date" no-title @input="menu = false"></v-date-picker>
+                              <v-date-picker :min="editItem.last_at ? new Date(editselectDate).toISOString().substr(0, 10) : new Date().toISOString().substr(0, 10)" v-model="editlast_date" no-title @input="menu3 = false"></v-date-picker>
                             </v-menu>
-                            <v-menu v-model="menu2" :close-on-content-click="false" transition="scale-transition"
+                            <v-menu v-model="menu4" :close-on-content-click="false" transition="scale-transition"
                               offset-y max-width="290px" min-width="290px"
                             >
                               <template v-slot:activator="{ on, attrs }">
@@ -159,7 +159,7 @@
                                   :rules="[v => !!v || 'Date is requried']"
                                 ></v-text-field>
                               </template>
-                              <v-date-picker :min="selectDate" v-model="editItem.start_at" no-title @input="menu2 = false"></v-date-picker>
+                              <v-date-picker :min="selectDate" v-model="editItem.start_at" no-title @input="menu4 = false"></v-date-picker>
                             </v-menu>
               </v-card-text>
               <v-card-actions class="white">
@@ -219,9 +219,11 @@ export default {
         menu: false,
         menu2: false,
         menu3: false,
+        menu4: false,
         deleteDialog: false,
         snackbar: false,
         selectDate: new Date().toISOString().substr(0, 10),
+        editselectDate: new Date().toISOString().substr(0, 10),
         formData : {},
         editItem : {},
         category: '',
@@ -240,6 +242,7 @@ export default {
       editlast_date(val){
         if(val){
           this.selectDate = new Date(new Date(val).getTime()+(2*24*60*60*1000)).toISOString().substr(0, 10);
+          this.editItem.start_at = this.selectDate;
           this.editItem.last_at = val;
         }
       },
@@ -308,6 +311,7 @@ export default {
         this.editItem.capacity = item.capacity
         this.editItem.start_at = item.start_at
         this.editlast_date = item.last_at
+        this.editselectDate = item.last_at
         this.editDialog = true
       },
       deleteItem(item){

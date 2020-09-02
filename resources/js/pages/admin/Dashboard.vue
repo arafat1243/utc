@@ -68,46 +68,6 @@
                     </v-card>
                 </v-col>
             </v-row>
-            
-                  
-                  
-            <v-menu v-if="role.can('student_update')" transition="slide-x-reverse-transition">
-             
-              <template v-slot:activator="{ on, attrs }">
-                  <v-btn bottom color="primary" dark fab fixed right
-                    v-bind="attrs" v-on="on" @click="request_menu = true">
-                    <v-badge top left color="error" :content="paymentRequest.length" :value="paymentRequest.length">
-                      <v-icon>mdi-currency-bdt</v-icon>
-                    </v-badge>
-                  </v-btn>
-                
-              </template>
-              
-              <v-card width="350px" class="ml-auto">
-                        <v-card height="330px"  flat class="primary lighten-3 overflow-y-auto">
-                            <v-card-text v-if="paymentRequest.length > 0">
-                                <div  class="d-flex align-center"  v-for="(request,i) in paymentRequest" :key="i">
-                                    <v-avatar size="50px">
-                                        <v-img :src="request.avatar"></v-img>
-                                    </v-avatar>
-                                    <div class="ml-3 font-weight-bold">
-                                        <a :href="$route('students.edit',request.id)" class="light-blue--text text--darken-3 text-h6">{{request.name}}</a>
-                                        <div>
-                                            Number : {{request.number}}<br/>
-                                            Course Name : {{request.course[0]}} <br/>Pay Amount : {{request.amount}}tk
-                                        </div>
-                                        <v-divider class="my-3"></v-divider>
-                                    </div>
-                                </div>
-                            </v-card-text>
-                            <div v-else class="text-center center-vaticaly grey--text title font-weight-bold font-18">No payment request</div>
-                        </v-card>
-                        <v-card-text class="pt-2">
-                        <div class="title font-weight-light mb-2">Payment Request</div>
-                        <div class="subheading font-weight-light grey--text">This week Performance</div>
-                        </v-card-text>
-                    </v-card>
-            </v-menu>
         </v-container>
     </Layout>
 </template>
@@ -186,19 +146,15 @@ export default {
           }
       },
       role: new Auth(vm.$page.auth.roles),
-      timeOut: ''
     }),
-    props:['slides','payments','studentCourse','totals','paymentRequest'],
+    props:['slides','payments','studentCourse','totals'],
     mounted(){
       this.slideer();
-    },
-    destroyed(){
-      clearTimeout(this.timeOut);
     },
     methods:{
       slideer(){
         if(this.slides.length > 0){
-         this.timeOut = setInterval(()=>{
+         setInterval(()=>{
           if(this.slides.length != this.onboarding){
             this.onboarding +=1;
           }

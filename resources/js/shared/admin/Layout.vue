@@ -70,7 +70,7 @@
             <template v-slot:activator="{ on }">
                <v-btn icon large v-on="on">
                                 <v-avatar size="50px" item>
-                                    <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                                    <v-img :src="$page.auth.avatar"></v-img>
                                 </v-avatar>
                             </v-btn>
                         </template>
@@ -78,7 +78,7 @@
                         <v-list>
                             <v-list-item>
                             <v-list-item-avatar size="80px">
-                                <v-img :src="$page.baseUrl+$page.auth.avatar"></v-img>
+                                <v-img :src="$page.auth.avatar"></v-img>
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>{{$page.auth.name}}</v-list-item-title>
@@ -129,12 +129,12 @@
 <script>
 import Auth from '@/auth'
   export default {
-    data: () => ({
+    data: vm => ({
         dialog: false,
         mini: true,
         drawer: null,
         menu: false,
-        role: '',
+        role: new Auth(vm.$page.auth.roles),
         items: [],
         navShow: true
     }),
@@ -151,7 +151,6 @@ import Auth from '@/auth'
       }
     },
     created(){
-        this.role = new Auth(this.$page.auth.roles)
         if(this.nav){
             this.navShow = !this.nav
         }
@@ -165,6 +164,8 @@ import Auth from '@/auth'
                 { title: 'Student', icon: 'mdi-card-account-details ', path: this.$route('students.index'), can: this.role.can([
                     'student_view','student_update','student_delete'
                 ]) },
+                { title: 'Payment', icon: 'mdi-currency-bdt',path: this.$route('payment.index'), can: this.role.can('student_view')
+                },
                 { title: 'Roles', icon: 'mdi-account-cog',can: this.role.isAdmin(),
                     items:[
                         { title: 'Add Role', path: this.$route('roles.create'),can: this.role.isAdmin()},

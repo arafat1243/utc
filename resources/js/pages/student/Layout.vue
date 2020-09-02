@@ -1,12 +1,8 @@
 
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer
-      v-model="drawer"
-      :clipped="$vuetify.breakpoint.lgAndUp"
-      app
-      :mini-variant.sync="mini"
-      permanent
+    <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app
+      :mini-variant.sync="mini" permanent v-if="!nav"
     >
       <v-list dense>
                     <div v-for="(item,i) in items"
@@ -46,9 +42,11 @@
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       app
     >
-      <v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-if="!nav" @click.stop="mini = !mini"></v-app-bar-nav-icon>
       <v-toolbar-title class="ml-0 pl-4">
-        <span >Universal Technology Corporation</span>
+        <inertia-link :href="$route('student')" role="menuitem">
+            <span >Universal Technology Corporation</span>
+        </inertia-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       
@@ -122,6 +120,7 @@ import Auth from '@/auth'
     }),
     props: {
       title: String,
+      nav: Boolean
     },
     watch: {
       title: {
@@ -138,7 +137,7 @@ import Auth from '@/auth'
         init(){
             this.items = [
                 { title: 'Dashboard', icon: 'mdi-view-dashboard', path: this.$route('student'),can: true },
-                { title: 'Upcomeing Batches', icon: 'mdi-clipboard-list', path: this.$route('student.batch'),can: true },
+                { title: 'Outher Courses', icon: 'mdi-school', path: this.$route('student.batch'),can: true },
             ]
         },
         isRoute(name) {

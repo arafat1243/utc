@@ -30,40 +30,11 @@ class DashboardController extends Controller
             })->toArray(); 
         $totals = $this->total();
         $studentCourse = $this->students();
-        $paymentRequest = $this->paymentRequest();
         $payments = $this->payment();
-        return Inertia::render('admin/Dashboard',compact('slides','payments','studentCourse','totals','paymentRequest'));
+        return Inertia::render('admin/Dashboard',compact('slides','payments','studentCourse','totals'));
     }
-
-    protected function paymentRequest(){
-       return  Payment::with(['student.courses'=>function($q){
-                        $q->with(['course'=>function($q){
-                            $q->select('id','title');
-                        }])->where('status','ongoing');
-                    }
-                    ,'student.user'=>function($q){
-                        $q->select('id','name','avatar');
-                    }])
-                    ->where('approve',false)
-                    ->where('created_at', '>', Carbon::now()->startOfWeek())
-                    ->where('created_at', '<', Carbon::now()->endOfWeek())
-                    ->get() 
-                    ->map(function($payment){
-                        return [
-                            'id'=>$payment->id,
-                            'amount' => $payment->amount,
-                            'name'=> $payment->student->user->name,
-                            'avatar'=> route('private.assets',str_replace('/',':',$payment->student->user->avatar)),
-                            'number'=> $payment->student->number,
-                            'course'=> $payment->student->courses->transform(function($course){
-                                return $course->course->title;
-                            }),
-                        ];
-                    });
-    }
-
     protected function students(){
-        $studentCourse = [];
+        $studentCourse = []; $key = [];
         $students = StudentHasCourse::whereMonth('created_at','>', Carbon::now()->subMonth(3))
             ->withCount('student')
             ->with(['course'=>function($q){
@@ -72,27 +43,24 @@ class DashboardController extends Controller
             ->get()
             ->map(function($student){
                 return [
-                    $student->student_count, //$student->student_count
-                    $student->course->title
+                    'count' => $student->student_count,
+                    'title' => $student->course->title
                 ];
-            });
-        $couNam = [];
-        foreach($students as $st){
-            if(in_array((string) $st[1],$couNam)){
-                if (($key = array_search((string) $st[1],$couNam)) !== false) {  
-                    $couNam[$st[0]+$key]=$st[1];
-                    unset($couNam[$key]);
+            })->toArray();
+            foreach($students as $student => $v){
+                if(array_key_exists($v['title'],$key)){
+                    $result = $key[$v['title']];
+                    $key[$v['title']] = $result + $v['count'];
+                }else{
+                    $key[$v['title']] = $v['count'];
                 }
-            }else{
-                $couNam[$st[0]]=$st[1];
             }
-        }
-        foreach($couNam as $key => $value){
-            array_push($studentCourse,[
-                'x' => $value,
-                'y' => $key
-            ]);
-        }
+            foreach($key as $ke => $value){
+                array_push($studentCourse,[
+                    'x' => $ke,
+                    'y' => $value
+                ]);
+            }
         return $studentCourse;
     }
 
