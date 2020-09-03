@@ -4,7 +4,9 @@
             <v-img :src="banner"></v-img>
             <v-card-title><v-icon left color="primary" large>mdi-trophy-award</v-icon> ABOUT UTC</v-card-title>
             <v-card-text>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium hic delectus reprehenderit quis et ex inventore sed minus illo earum omnis dolores natus optio blanditiis soluta accusamus dignissimos a cum cumque quas vel praesentium, itaque dolorem. Nobis nesciunt, perspiciatis magnam deserunt labore aliquid saepe aliquam assumenda nihil, libero suscipit inventore beatae culpa minus laboriosam officiis enim voluptate quos non sunt?
+                Universal Technology Corporation (UTC) is the pioneer software company to setup a bench mark in the industry. Our key principles includes maintaining the leading software solution provider, ensuring benefit of our clients, shareholders and employees, developing, disseminating and exploiting the remarkable experience, expertise and knowledge of all of our people and developing a distinctive competence in process development and project management. Very simply, providing the best service possible at all times while guaranteeing a quality product is our number one goal. 
+<br/>
+Universal Technology Corporation (UTC) is always with you to provide all kinds of IT Solutions.
             </v-card-text>
         </v-card>
     </About>

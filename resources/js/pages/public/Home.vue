@@ -54,17 +54,19 @@
                             <v-card-title class="text-h5 text-md-h3 ftco-headline">About <div>UTC</div></v-card-title>
                             <div class="double-line-bottom-theme-colored-2"></div>
                             <v-card-subtitle style="font-size:1em">
-                                Lorem ipsum dolor sit amet, consectetur adpisici elit. Obcaec atdistinc tio quaerat iusto, accusa ntumeos nsect eturpers piciatis minima tempore!
+                                Universal Technology Corporation (UTC) is the pioneer software company to setup a bench mark in the industry. Our key principles includes maintaining the leading software solution provider, ensuring benefit of our clients, shareholders and employees, developing, disseminating and exploiting the remarkable experience, expertise and knowledge of all of our people and developing a distinctive competence in process development and project management.
                             </v-card-subtitle>
-                            <v-card-text class="ftco-list">
+                            <!-- <v-card-text class="ftco-list">
+                                <li>Honorium </li>
                                 <li>We achieved most leading universtiy award 2017</li>
                                 <li>We achieved most leading universtiy award 2017</li>
                                 <li>We achieved most leading universtiy award 2017</li>
                                 <li>We achieved most leading universtiy award 2017</li>
-                                <li>We achieved most leading universtiy award 2017</li>
-                            </v-card-text>
+                            </v-card-text> -->
                             <v-card-actions>
-                                <v-btn class="primary text-capitalize">Read More</v-btn>
+                                <inertia-link :href="$route('public.about')" class="my-4 v-btn v-btn--contained theme--light v-size--default primary">
+                                    <span class="v-btn__content">Read More</span>
+                                </inertia-link>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -218,6 +220,7 @@
                                     <v-list-item-content>
                                         <div class="text-h6">Contact Number</div>
                                         <div class="text-subtitle-2 grey--text">+880 1812-669757</div>
+                                        <div class="text-subtitle-2 grey--text">+880 1881-006000</div>
                                     </v-list-item-content>
                                 </v-list-item>
                                 <v-list-item>
@@ -226,7 +229,8 @@
                                     </v-list-item-icon>
                                     <v-list-item-content>
                                         <div class="text-h6">Email Address</div>
-                                        <div class="text-subtitle-2 grey--text">supporte@utc.net</div>
+                                        <div class="text-subtitle-2 grey--text">supporte@utcworld.net</div>
+                                        <div class="text-subtitle-2 grey--text">utcsoftltd@gmail.com</div>
                                     </v-list-item-content>
                                 </v-list-item>
                             </v-list>

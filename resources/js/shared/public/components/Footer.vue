@@ -11,7 +11,7 @@
             <div class="subtitle-2 text-capitalize">207, Doctor Para, Feni, Bangladesh</div>
             <ul class="footer-list mt-2">
               <li><v-icon small class="mr-2 primary--text">mdi-phone</v-icon>+880 1812-669757</li>
-              <li><v-icon small class="mr-2 primary--text">mdi-email-outline</v-icon>info@utcworld.net</li>
+              <li><v-icon small class="mr-2 primary--text">mdi-email-outline</v-icon>supporte@utcworld.net</li>
               <li><v-icon small class="mr-2 primary--text">mdi-earth</v-icon>www.utcworld.net</li>
             </ul>
             <ul class="footer-list mt-2 d-flex">
@@ -26,9 +26,9 @@
             <div class="text-h5 white--text mt-4">Usefull Links</div>
             <div class="double-line-bottom-theme-colored-2"></div>
             <ul class="footer-list has-link">
-              <li> <a href="/" class="grey--text">Home Page</a></li>
-              <li> <a href="/" class="grey--text">About Us</a></li>
-              <li> <a href="/" class="grey--text">Contact Us</a></li>
+              <li> <inertia-link class="grey--text" :href="$route('home')">Home Page</inertia-link></li>
+              <li> <inertia-link class="grey--text" :href="$route('public.about')">About US</inertia-link></li>
+              <li> <inertia-link class="grey--text" :href="$route('home')">Contact Us</inertia-link></li>
               <li> <a href="/" class="grey--text">Terms and Conditions</a></li>
             </ul>
           </v-col>

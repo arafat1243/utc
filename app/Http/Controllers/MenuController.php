@@ -43,7 +43,6 @@ class MenuController extends Controller
             ['text' => 'About', 'icon' => 'mdi-information','path' => '/about',
                 'items' => [
                     ['text'=> 'About UTC','path'=>'/about/utc'],
-                    ['text'=> 'What We Are','path'=>'/about/what-we-are'],
                     ['text'=> 'Our Vision & Mission','path'=>'/about/our-vision-mission'],
                     ['text'=> 'Our Speciality','path'=>'/about/our-speciality'],
                 ]

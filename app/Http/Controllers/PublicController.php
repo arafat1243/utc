@@ -131,10 +131,6 @@ class PublicController extends Controller
                 $banner = route('public.assets',str_replace('/',':','images/others/banner.jpg'));
                 return Inertia::render('public/AboutUtc',compact('banner'));
             }
-            if($slug == 'what-we-are'){
-                $banner = route('public.assets',str_replace('/',':','images/others/whatWeAre.jpg'));
-                return Inertia::render('public/WhatWeAre',compact('banner'));
-            }
             if($slug == 'our-vision-mission'){
                 $banner = route('public.assets',str_replace('/',':','images/others/vision-and-mission.jpg'));
                 return Inertia::render('public/OurVisionMission',compact('banner'));

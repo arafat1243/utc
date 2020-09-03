@@ -14,11 +14,11 @@ class UserSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'name' => 'Yeasir Arafat',
-            'email' => 'arafat@gmail.com',
+            'name' => 'Admin',
+            'email' => 'shohelutc@gmail.com',
             'avatar' => 'images/users/default.png',
             'email_verified_at' => Carbon\Carbon::now()->toDateTimeString(),
-            'password' => Hash::make('password'),
+            'password' => Hash::make('UtcUtc@123'),
             'status' => true,
             'created_at' => Carbon\Carbon::now()->toDateTimeString(),
             'updated_at' => Carbon\Carbon::now()->toDateTimeString(),

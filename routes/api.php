@@ -15,3 +15,4 @@ use Whoops\Run;
 */
 
     Route::get('/clientForCarasul','PublicController@clientForCarasul')->name('public.clientForCarasul');
+
